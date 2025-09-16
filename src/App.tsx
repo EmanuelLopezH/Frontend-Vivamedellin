@@ -5,7 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import EventPage from "./pages/EventPage";
+import EventPage1 from "./pages/EventPage1";
+import EventPage2 from "./pages/EventPage2";
 
 const queryClient = new QueryClient();
 
@@ -17,7 +18,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/event" element={<EventPage />} />
+          <Route path="/event-01" element={<EventPage1 />} />
+          <Route path="/event-02" element={<EventPage2 />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

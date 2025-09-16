@@ -1,27 +1,65 @@
+"use client"
+
 import { CommentCard } from "@/components/CommentCard"
 import { CommentForm } from "@/components/CommentForm"
+import { EventComment } from "@/mocks/mockComments";
+import { commentService } from "@/services/commentService";
+import { useEffect, useState } from "react";
+import { CommentList } from "./CommentList";
 
-interface Comment {
+type Props = {
+  eventId: number;
+  isLoggedIn: boolean;
+  currentUserName?: string; // para autor al agregar (simulado)
+  onLogin?: () => void;
+};
+
+/*interface Comment {
   id: number
   author: string
   content: string
   createdAt: string
   avatarUrl?: string
-}
+}*/
 
-interface CommentSectionProps {
+/*interface CommentSectionProps {
   comments: Comment[]
   isLoggedIn: boolean
   onAddComment: (content: string) => void
   onLogin?: () => void
-}
+}*/
 
-export function CommentSection({ comments, isLoggedIn, onAddComment, onLogin }: CommentSectionProps) {
-  return (
+export function CommentSection({ eventId, isLoggedIn, currentUserName = "Guest", onLogin }: Props) {
+  const [comments, setComments] = useState<EventComment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+    useEffect(() => {
+    setLoading(true);
+    commentService.getCommentsByEventId(eventId).then((data) => {
+      setComments(data);
+      setLoading(false);
+    });
+  }, [eventId]);
+
+  const handleAddComment = async (content: string) => {
+    if (!content.trim()) return;
+    setSubmitting(true);
+    try {
+      // llamamos al service (mock ahora, fetch real luego)
+      const newComment = await commentService.addComment(eventId, currentUserName, content);
+      // actualizar estado (nuevo al principio)
+      setComments((prev) => [newComment, ...prev]);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  
+  /*return (
     <section>
       <h3 className="text-xl font-semibold mb-10">Comments</h3>
 
-      {/* Aquí se muestra la caja para comentar */}
+      {/* Aquí se muestra la caja para comentar }
       <div className="mb-6">
         <CommentForm
           onAddComment={onAddComment}
@@ -30,7 +68,7 @@ export function CommentSection({ comments, isLoggedIn, onAddComment, onLogin }: 
         />
       </div>
 
-      {/* Lista de comentarios */}
+      {/* Lista de comentarios }
       {comments.length > 0 ? (
         <div className="space-y-3">
           {comments.map((c) => (
@@ -48,4 +86,25 @@ export function CommentSection({ comments, isLoggedIn, onAddComment, onLogin }: 
       )}
     </section>
   )
+}*/
+
+  return (
+    <section>
+      <h3 className="text-xl font-semibold mb-6">Comments</h3>
+
+      <div className="mb-6">
+        <CommentForm
+          onAddComment={handleAddComment}
+          isLoggedIn={isLoggedIn}
+          onLogin={onLogin}
+        />
+      </div>
+
+      {loading ? (
+        <p className="text-slate-500">Cargando comentarios...</p>
+      ) : (
+        <CommentList comments={comments} />
+      )}
+    </section>
+  );
 }

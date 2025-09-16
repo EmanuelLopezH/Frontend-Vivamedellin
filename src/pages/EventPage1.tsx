@@ -1,28 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import EventBanner from "@/components/EventBanner";
 import { Button } from "@/components/ui/button";
-import { commentService } from "@/services/commentService";
-import type { EventComment  } from "@/mocks/mockComments";
 import { Calendar, Share2, Star } from "lucide-react"
 import { CommentSection } from "@/components/CommentSection";
 
 export default function EventPage() {
-  const [comments, setComments] = useState<EventComment[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Estado que faltaba: isLoggedIn
+  //const [comments, setComments] = useState<EventComment[]>([]);
+  //const [loading, setLoading] = useState(true);
+  // ID del evento (simulado, en producción vendría de la URL o props)
+  const eventId = 1;
+  // Estado para simular si el usuario está logueado o no
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  useEffect(() => {
+  /*useEffect(() => {
     commentService.getCommentsByEventId(1).then((data) => {
       setComments(data);
       setLoading(false);
     });
-  }, []);
+  }, []);*/
 
-  // Handler para agregar comentario (simulado)
+/*  // Handler para agregar comentario (simulado)
   const handleAddComment = (content: string) => {
     const newComment: EventComment = {
       id: Date.now(), // id numérico único temporal
@@ -32,14 +31,14 @@ export default function EventPage() {
     };
     setComments((prev) => [newComment, ...prev]);
     // opcional: llamar a commentService.addComment(...) cuando lo implementes
-  };
+  };*/
 
-  // Handler para "log in" (simulación). En producción vendría del flujo de auth.
+/*  // Handler para "log in" (simulación). En producción vendría del flujo de auth.
   const handleLogin = () => {
     // ejemplo simple: marcar como logueado
     setIsLoggedIn(true);
     // o redirigir a /login: router.push('/login')
-  };
+  };*/
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -85,7 +84,18 @@ export default function EventPage() {
           </p>
         </div>
 
-        <section>
+        <CommentSection
+          eventId={eventId}
+          isLoggedIn={isLoggedIn}
+          currentUserName="Demo User"
+          onLogin={() => setIsLoggedIn(true)}
+        />
+      </div>
+    </div>
+  );
+}
+
+        /*<section>
           {loading ? (
             <p className="text-slate-500">Cargando comentarios...</p>
           ) : (
@@ -96,8 +106,4 @@ export default function EventPage() {
               onLogin={handleLogin}
             />
           )}
-        </section>
-      </div>
-    </div>
-  );
-}
+        </section>*/
