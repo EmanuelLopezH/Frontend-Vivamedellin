@@ -19,7 +19,7 @@ export const commentService = {
   });
   },
 
-    async addComment(eventId: number, author: string, content: string): Promise<EventComment> {
+    async addComment(eventId: number, author: string, content: string, parentId?: number): Promise<EventComment> {
     return new Promise((resolve) => {
       setTimeout(() => {
         const newComment: EventComment = {
@@ -28,6 +28,7 @@ export const commentService = {
           author,
           content,
           createdAt: new Date().toISOString(),
+          parentId, // para respuestas a comentarios esta es una llave opcional
         };
         // simular persistencia en mock
         mockComments.push(newComment);

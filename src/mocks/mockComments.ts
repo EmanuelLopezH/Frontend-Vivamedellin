@@ -5,9 +5,14 @@ export type EventComment = {
   createdAt: string;
   content: string;
   avatarUrl?: string; //opcional
+  parentId?: number; // para respuestas a comentarios
 };
 
-export let mockComments: EventComment[] = [
+export type CommentWithActions = EventComment & {
+  onReply?: () => void;
+};
+
+export const mockComments: EventComment[] = [
   {
     id: 1,
     eventId: 1,

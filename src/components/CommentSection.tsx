@@ -33,8 +33,9 @@ export function CommentSection({ eventId, isLoggedIn, currentUserName = "Guest",
   const [comments, setComments] = useState<EventComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [replyTo, setReplyTo] = useState<number | null>(null); // id del comentario al que se responde
 
-    useEffect(() => {
+  useEffect(() => {
     setLoading(true);
     commentService.getCommentsByEventId(eventId).then((data) => {
       setComments(data);
@@ -42,14 +43,16 @@ export function CommentSection({ eventId, isLoggedIn, currentUserName = "Guest",
     });
   }, [eventId]);
 
-  const handleAddComment = async (content: string) => {
+  
+  const handleAddComment = async (content: string, parentId?: number) => {
     if (!content.trim()) return;
     setSubmitting(true);
     try {
       // llamamos al service (mock ahora, fetch real luego)
-      const newComment = await commentService.addComment(eventId, currentUserName, content);
+      const newComment = await commentService.addComment(eventId, currentUserName, content, parentId);
       // actualizar estado (nuevo al principio)
       setComments((prev) => [newComment, ...prev]);
+      setReplyTo(null); // limpiar respuesta
     } finally {
       setSubmitting(false);
     }
@@ -92,6 +95,7 @@ export function CommentSection({ eventId, isLoggedIn, currentUserName = "Guest",
     <section>
       <h3 className="text-xl font-semibold mb-6">Comments</h3>
 
+      {/* Aquí se muestra el formulario de comentario principal */}
       <div className="mb-6">
         <CommentForm
           onAddComment={handleAddComment}
@@ -103,7 +107,13 @@ export function CommentSection({ eventId, isLoggedIn, currentUserName = "Guest",
       {loading ? (
         <p className="text-slate-500">Cargando comentarios...</p>
       ) : (
-        <CommentList comments={comments} />
+        <CommentList 
+          comments={comments}
+          onReply={(id) => setReplyTo(id)}
+          replyTo={replyTo}
+          onAddReply={(content, parentId) => handleAddComment(content, parentId)}
+          isLoggedIn={isLoggedIn}
+          onLogin={onLogin}/>
       )}
     </section>
   );
