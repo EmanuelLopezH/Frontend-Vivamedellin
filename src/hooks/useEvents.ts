@@ -1,53 +1,24 @@
-import { useState, useEffect } from 'react';
-import { Event } from '@/types';
-import { getEvents, getEventById } from '@/services/eventService';
+import { useEffect, useState } from "react";
+import { eventService } from "@/services/eventService";
+import type { Event } from "@/mocks/mockEvents";
 
-export const useEvents = () => {
-  const [events, setEvents] = useState<Event[]>([]);
+export function useEvent(eventId: number) {
+  const [Event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        const eventsData = await getEvents();
-        setEvents(eventsData);
-      } catch (err) {
-        setError('Error al cargar eventos');
-      } finally {
+    eventService
+      .getEventById(eventId)
+      .then((data) => {
+        setEvent(data || null);
         setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
-
-  return { events, loading, error };
-};
-
-export const useEvent = (id: string) => {
-  const [event, setEvent] = useState<Event | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        setLoading(true);
-        const eventData = await getEventById(id);
-        setEvent(eventData);
-      } catch (err) {
-        setError('Error al cargar evento');
-      } finally {
+      })
+      .catch((err) => {
+        setError(err.message || "Error fetching events");
         setLoading(false);
-      }
-    };
+      });
+  }, [eventId]);
 
-    if (id) {
-      fetchEvent();
-    }
-  }, [id]);
-
-  return { event, loading, error };
-};
+  return { Event, loading, error };
+}

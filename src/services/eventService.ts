@@ -1,22 +1,20 @@
-import { Event } from '@/types';
-import { mockEvents } from '@/mocks/mockEvents';
+import { mockEvents, type Event } from "@/mocks/mockEvents";
 
-// Service layer - mañana se puede cambiar por fetch calls sin tocar la UI
-export const getEvents = async (): Promise<Event[]> => {
-  // Simulamos una llamada async
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockEvents);
-    }, 100);
-  });
-};
+export const eventService = {
+  async getEvents(): Promise<Event[]> {
+    // Simula un fetch al backend
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(mockEvents);
+      }, 300);
+    });
+  },
 
-export const getEventById = async (id: string): Promise<Event | null> => {
-  // Simulamos una llamada async
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const event = mockEvents.find(event => event.id === id) || null;
-      resolve(event);
-    }, 100);
-  });
+  async getEventById(id: number): Promise<Event | undefined> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(mockEvents.find((e) => e.id === id));
+      }, 300);
+    });
+  },
 };

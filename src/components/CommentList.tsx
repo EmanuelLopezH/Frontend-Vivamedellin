@@ -11,24 +11,6 @@ type Props = {
   onLogin?: () => void;
  };
 
-/*export function CommentList({ comments }: Props) {
-  if (!comments.length) {
-    return <p className="text-muted-foreground">There are no comments for this event yet.</p>;
-  }
-
-  return (
-    <ul className="space-y-4">
-      {comments.map((comment) => (
-        <li key={comment.id} className="border-b pb-2">
-          <CommentCard {...comment} />
-        </li>
-      ))}
-    </ul>
-  );
-}*/
-
-// Nueva versión que soporta respuestas anidadas
-
 export function CommentList({ comments, onReply, replyTo, onAddReply, isLoggedIn, onLogin, }: Props) {
   const topLevel = comments.filter((c) => !c.parentId);
 

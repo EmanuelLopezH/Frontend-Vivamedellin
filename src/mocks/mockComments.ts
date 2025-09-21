@@ -30,7 +30,7 @@ export const mockComments: EventComment[] = [
   },
   {
     id: 3,
-    eventId: 2, // ejemplo otro evento
+    eventId: 2,
     author: "Stiven Herrera",
     content: "¿Alguien va al meet & greet?",
     createdAt: "2025-09-12T10:00:00Z",
@@ -38,14 +38,14 @@ export const mockComments: EventComment[] = [
   },
   {
     id: 4,
-    eventId: 2, // ejemplo otro evento
+    eventId: 2,
     author: "Andrés Pérez",
     content: "Guns N’ Roses coming to Medellín? This is going to be the loudest night the Atanasio has ever seen!",
     createdAt: "2025-09-11T09:15:00Z",
   },
   {
-    id: 4,
-    eventId: 2, // ejemplo otro evento
+    id: 5,
+    eventId: 2,
     author: "Margarita Gómez",
     content: "October can’t come soon enough. Sweet Child O’ Mine live in Medellín will be legendary!",
     createdAt: "2025-09-10T14:30:00Z",

@@ -1,7 +1,7 @@
-import { useEvents } from '@/hooks/useEvents';
+import { useEvent } from '@/hooks/useEvents';
 
 const EventList = () => {
-  const { events, loading, error } = useEvents();
+  const { Event, loading, error } = useEvent(eventId);
 
   if (loading) {
     return <div>Cargando eventos...</div>;
@@ -15,10 +15,10 @@ const EventList = () => {
     <div>
       <h2>Lista de Eventos</h2>
       <ul>
-        {events.map((event) => (
-          <li key={event.id}>
-            <h3>{event.title}</h3>
-            <p>Fecha: {new Date(event.date).toLocaleDateString()}</p>
+        {Event.map((Event) => (
+          <li key={Event.id}>
+            <h3>{Event.title}</h3>
+            <p>Fecha: {new Date(Event.date).toLocaleDateString()}</p>
           </li>
         ))}
       </ul>

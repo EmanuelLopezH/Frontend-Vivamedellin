@@ -1,61 +1,24 @@
-import { Event, Comment } from '@/types';
-
-const mockComments: Comment[] = [
-  {
-    id: 'c1',
-    user: 'Juan Pérez',
-    message: '¡Excelente evento! Muy bien organizado.',
-    date: '2024-01-15T14:30:00Z'
-  },
-  {
-    id: 'c2',
-    user: 'María García',
-    message: 'Me gustó mucho la presentación principal.',
-    date: '2024-01-15T15:45:00Z'
-  },
-  {
-    id: 'c3',
-    user: 'Carlos López',
-    message: 'Gran networking, conocí gente muy interesante.',
-    date: '2024-01-15T16:20:00Z'
-  }
-];
-
-const mockComments2: Comment[] = [
-  {
-    id: 'c4',
-    user: 'Ana Martín',
-    message: 'El workshop fue muy práctico y útil.',
-    date: '2024-01-20T10:15:00Z'
-  },
-  {
-    id: 'c5',
-    user: 'Roberto Silva',
-    message: 'Aprendí mucho sobre las nuevas tecnologías.',
-    date: '2024-01-20T11:30:00Z'
-  }
-];
+export type Event = {
+  id: number,
+  title: string,
+  description: string,
+  date: string,
+  location: string
+}
 
 export const mockEvents: Event[] = [
   {
-    id: 'e1',
-    title: 'Conferencia de Tecnología 2024',
-    description: 'Una conferencia sobre las últimas tendencias en tecnología y desarrollo de software.',
-    date: '2024-01-15T09:00:00Z',
-    comments: mockComments
+    id: 1,
+    title: 'Bad Bunny in Medellín',
+    description: 'Experience Bad Bunny Live at Atanasio Girardot Stadium on Friday, January 23, 2026! The countdown has begun! Bad Bunny is taking over Atanasio Girardot Stadium on Friday, January 23, 2026, and with hits January 23, 2026, and with hits like PERRO NEGRO, un x100to and ADIVINO and a following of 83.9M+ strong, you´ll want to be front and center for this. ',
+    date: 'Fri, 23 Jan, 2026 at 8:00 pm - Sat, 24 Jan, 2026 at 12:00 am (COT)',
+    location: 'Atanasio Girardot Stadium, Medellín, Colombia',
   },
   {
-    id: 'e2',
-    title: 'Workshop de React Avanzado',
-    description: 'Taller práctico sobre patrones avanzados en React y mejores prácticas.',
-    date: '2024-01-20T10:00:00Z',
-    comments: mockComments2
+    id: 2,
+    title: 'Guns N´Roses in Medellín',
+    description: 'It´s that time of the year where everyone wants to have a musical breath! Your favorite, Guns N´Roses is hitting Atanasio Girardot Stadium on Saturday, October 11, 2025, and with a setlist that includes chart-toppers like Sweet Child O´Mine, Welcome To The Jungle and Paradise City and 31.3M+ fans backing them, you´re in for a night of epic proportions.',
+    date: 'Sat, 11 Oct, 2025 at 07:00 pm to 11:00 pm (COT)',
+    location: 'Atanasio Girardot Stadium, Medellin, AN, Colombia',
   },
-  {
-    id: 'e3',
-    title: 'Meetup de JavaScript',
-    description: 'Encuentro mensual de la comunidad JavaScript local.',
-    date: '2024-01-25T18:00:00Z',
-    comments: []
-  }
 ];
