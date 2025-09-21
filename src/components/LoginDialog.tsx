@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { login } from "@/services/authService"
+import { login, setCurrentUser } from "@/mocks/mockUsers"
 
 interface LoginDialogProps {
   open: boolean
@@ -14,15 +14,21 @@ interface LoginDialogProps {
 }
 
 export function LoginDialog({ open, onClose, onLoginSuccess }: LoginDialogProps) {
-  const [username, setUsername] = useState("")
+  const [name, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     // Aquí va la lógica real de autenticación (API o mock)
-    if (username && password) {
-      onLoginSuccess()
-      onClose()
+    try {
+      const user = await login(name, password)   // 🔑 validar usuario
+      setCurrentUser(user)                           // ✅ guardar usuario logueado
+      onLoginSuccess()                               // notificar al padre
+      onClose()                                      // cerrar modal
+    } catch (err) {
+      setError("Usuario o contraseña incorrectos")   // mensaje de error
+      console.error(err)
     }
   }
 
@@ -34,11 +40,11 @@ export function LoginDialog({ open, onClose, onLoginSuccess }: LoginDialogProps)
         </DialogHeader>
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="name">Username</Label>
             <Input
-              id="username"
+              id="name"
               type="text"
-              value={username}
+              value={name}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
@@ -53,6 +59,7 @@ export function LoginDialog({ open, onClose, onLoginSuccess }: LoginDialogProps)
               required
             />
           </div>
+          {error && <p className="text-sm text-red-500">{error}</p>}
           <DialogFooter>
             <Button type="submit">Login</Button>
           </DialogFooter>

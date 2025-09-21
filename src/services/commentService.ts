@@ -1,39 +1,28 @@
 import { mockComments, type EventComment } from "@/mocks/mockComments";
-import { getCurrentUser } from "@/services/authService"
+import { getCurrentUser } from "@/mocks/mockUsers";
 
 let nextId = mockComments.length + 1; // contador para nuevos IDs
 
 export const commentService = {
   async getCommentsByEventId(eventId: number): Promise<EventComment[]> {
     return mockComments.filter(c => c.eventId === eventId);
-    // Más adelante aquí se haría un fetch real al backend
-    //Cuando cambies al backend real, reemplaza la implementación interna 
-    // por fetch('/api/comments?eventId=...') y POST /api/comments.
-    // Por ahora devolvemos los mocks simulando un delay
-    /*return new Promise((resolve) => {
-      setTimeout(() => {
-      //filtrar los comentarios por eventId y ordenarlos por createdAt descendente
-      const filtered = mockComments
-        .filter((c) => c.eventId === eventId)
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      resolve(filtered);
-    }, 300);
-  })*/
   },
 
-   async addComment(eventId: number, author: string, content: string, parentId?: number): Promise<EventComment> {
+   async addComment(eventId: number, content: string, parentId?: number): Promise<EventComment> {
     const user = getCurrentUser()
     if (!user) throw new Error("This user not exists")
     
     const newComment: EventComment = {
       id: nextId++,
       eventId,
-      author,
+      name: user.name,
       content,
       createdAt: new Date().toISOString(),
       parentId,
+      avatarUrl: `https://i.pravatar.cc/150?u=${user.id}`
     } 
     mockComments.unshift(newComment);
+    localStorage.setItem("mockComments", JSON.stringify(mockComments))
     return newComment;
   },
 

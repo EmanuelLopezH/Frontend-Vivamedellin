@@ -45,7 +45,7 @@ export default function EventPage() {
         <CommentSection
           eventId={eventId}
           isLoggedIn={isLoggedIn}
-          currentUserName="Demo User"
+          name="Demo User"
           onLogin={() => setLoginOpen(true)}
         />
 
