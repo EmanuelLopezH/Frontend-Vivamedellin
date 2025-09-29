@@ -48,8 +48,8 @@ jobs:
       with:
         node-version: "22"
     - name: Install vecel CLI
-       run: npm i --global vercel@latest
+      run: npm i --global vercel@latest
     - name: Pull vercel env variables
-       run: vercel pull --yes --token=${{ secrets.VERCEL_TOKEN }}
+      run: vercel pull --yes --token=${{ secrets.VERCEL_TOKEN }}
     - name: Trigger Vercel Deployment
-       run: vercel deploy --prod --no-wait --token=${{ secrets.VERCEL_TOKEN }}
+      run: vercel deploy --prod --no-wait --token=${{ secrets.VERCEL_TOKEN }}
