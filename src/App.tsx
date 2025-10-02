@@ -17,8 +17,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<EventPage1 />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/" element={<Index />} />
+          <Route path="/event-01" element={<EventPage1 />} />
+          <Route path="/event-02" element={<EventPage2 />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
