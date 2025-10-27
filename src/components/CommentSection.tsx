@@ -5,6 +5,7 @@ import { EventComment } from "@/mocks/mockComments";
 import { commentService } from "@/services/commentService";
 import { useEffect, useState } from "react";
 import { CommentList } from "./CommentList";
+import { DeleteCommentDialog } from "./DeleteCommentDialog";
 
 type Props = {
   eventId: number;
@@ -18,6 +19,11 @@ export function CommentSection({ eventId, isLoggedIn, name = "Guest", onLogin }:
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [replyTo, setReplyTo] = useState<number | null>(null); // id del comentario al que se responde
+  
+  // Estados para el diálogo de eliminación
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState<EventComment | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -42,6 +48,52 @@ export function CommentSection({ eventId, isLoggedIn, name = "Guest", onLogin }:
     }
   };
 
+  /**
+   * Maneja la apertura del diálogo de confirmación de eliminación
+   * @param comment - Comentario a eliminar
+   */
+  const handleDeleteClick = (comment: EventComment) => {
+    setCommentToDelete(comment);
+    setDeleteDialogOpen(true);
+  };
+
+  /**
+   * Confirma y ejecuta la eliminación del comentario
+   * @param reason - Motivo de la eliminación
+   */
+  const handleDeleteConfirm = async (reason: string) => {
+    if (!commentToDelete) return;
+
+    setDeleting(true);
+    try {
+      // Llamar al servicio de eliminación
+      await commentService.deleteComment(commentToDelete.id, reason);
+      
+      // Actualizar la lista de comentarios
+      const updated = await commentService.getCommentsByEventId(eventId);
+      setComments(updated);
+      
+      // Cerrar el diálogo
+      setDeleteDialogOpen(false);
+      setCommentToDelete(null);
+      
+      console.log(`✅ Comentario eliminado exitosamente`);
+    } catch (error) {
+      console.error("Error al eliminar comentario:", error);
+      alert("Error al eliminar el comentario. Por favor intenta de nuevo.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  /**
+   * Cancela el proceso de eliminación
+   */
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setCommentToDelete(null);
+  };
+
   return (
     <section>
       <h3 className="text-xl font-semibold mb-6">Comments</h3>
@@ -63,8 +115,21 @@ export function CommentSection({ eventId, isLoggedIn, name = "Guest", onLogin }:
           onReply={(id) => setReplyTo(id)}
           replyTo={replyTo}
           onAddReply={(content, parentId) => handleAddComment(content, parentId)}
+          onDelete={handleDeleteClick} // Nueva prop para manejar eliminación
           isLoggedIn={isLoggedIn}
           onLogin={onLogin}/>
+      )}
+
+      {/* Diálogo de confirmación de eliminación */}
+      {commentToDelete && (
+        <DeleteCommentDialog
+          open={deleteDialogOpen}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          commentAuthor={commentToDelete.name}
+          commentContent={commentToDelete.content}
+          isLoading={deleting}
+        />
       )}
     </section>
   );

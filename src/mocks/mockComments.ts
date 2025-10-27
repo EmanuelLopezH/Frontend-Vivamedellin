@@ -14,8 +14,20 @@ export type CommentWithActions = EventComment & {
 
 export const mockComments: EventComment[] = (() => {
   const stored = localStorage.getItem("mockComments");
-  if (stored) return JSON.parse(stored);
-  return [
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      // Verificar que sea un array válido
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    } catch (error) {
+      console.warn("Error parsing stored comments, using defaults:", error);
+    }
+  }
+  
+  // Datos por defecto
+  const defaultComments = [
       { id: 1, 
         eventId: 1, 
         name: "Lucas Hernández", 
@@ -49,8 +61,37 @@ export const mockComments: EventComment[] = (() => {
       id: 5,
       eventId: 2,
       name: "Margarita Gómez",
-      content: "October can’t come soon enough. Sweet Child O’ Mine live in Medellín will be legendary!",
+      content: "October can't come soon enough. Sweet Child O' Mine live in Medellín will be legendary!",
       createdAt: "2025-09-10T14:30:00Z",
     },
+    // Comentarios con respuestas anidadas para probar eliminación
+    {
+      id: 6,
+      eventId: 1,
+      name: "Steven Herrera", // Administrador
+      content: "Este comentario tiene respuestas. Al eliminarlo, deberían desaparecer todas las respuestas también.",
+      createdAt: "2025-10-27T10:00:00Z",
+      avatarUrl: "https://i.pravatar.cc/150?img=1",
+    },
+    {
+      id: 7,
+      eventId: 1,
+      name: "Dahiana Ruiz",
+      content: "Esta es una respuesta al comentario de Steven.",
+      createdAt: "2025-10-27T10:05:00Z",
+      parentId: 6, // Respuesta al comentario 6
+    },
+    {
+      id: 8,
+      eventId: 1,
+      name: "Andrés Pérez",
+      content: "Esta es otra respuesta al mismo comentario.",
+      createdAt: "2025-10-27T10:10:00Z",
+      parentId: 6, // Respuesta al comentario 6
+    },
     ];
-  })();
+  
+  // Guardar datos por defecto en localStorage
+  localStorage.setItem("mockComments", JSON.stringify(defaultComments));
+  return defaultComments;
+})();

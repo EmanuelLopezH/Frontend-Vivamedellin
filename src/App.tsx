@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import EventPage1 from "./pages/EventPage1";
 import EventPage2 from "./pages/EventPage2";
+import "./utils/devUtils"; // Importar utilidades de desarrollo
 
 const queryClient = new QueryClient();
 
