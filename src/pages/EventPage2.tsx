@@ -1,19 +1,35 @@
 "use client";
 
-import {useState } from "react";
+import {useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar, Share2, Star } from "lucide-react"
 import { CommentSection } from "@/components/CommentSection";
 import EventBanner2 from "@/components/EventBanner2";
 import { useEvent } from "@/hooks/useEvents";
 import { LoginDialog } from "@/components/LoginDialog";
+import { getCurrentUser, clearCurrentUser } from "@/mocks/mockUsers";
 
 export default function EventPage() {
   const eventId = 2; // En real vendría de la URL con useParams
-  // Estado para simular si el usuario está logueado o no
   const { Event, loading, error } = useEvent(eventId);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [loginOpen, setLoginOpen] = useState(false)
+  const [currentUser, setCurrentUser] = useState<string>("Guest")
+
+  // ✅ Verificar estado de login al cargar la página
+  useEffect(() => {
+    const user = getCurrentUser()
+    if (user) {
+      setIsLoggedIn(true)
+      setCurrentUser(user.name)
+      console.log(`👤 [LOGIN] Usuario cargado desde localStorage: ${user.name} (${user.role})`)
+    } else {
+      // Limpiar cualquier estado inconsistente
+      setIsLoggedIn(false)
+      setCurrentUser("Guest")
+      console.log(`👤 [LOGIN] No hay usuario logueado`)
+    }
+  }, [])
 
   if (loading) return <div>Cargando evento...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -44,17 +60,39 @@ export default function EventPage() {
         <CommentSection
           eventId={eventId}
           isLoggedIn={isLoggedIn}
-          currentUserName="Demo User"
+          name={currentUser}
           onLogin={() => setLoginOpen(true)}
         />
-        
 
         {/* Modal de login */}
         <LoginDialog
           open={loginOpen}
           onClose={() => setLoginOpen(false)}
-          onLoginSuccess={() => setIsLoggedIn(true)}
+          onLoginSuccess={() => {
+            const user = getCurrentUser()
+            if (user) {
+              setIsLoggedIn(true)
+              setCurrentUser(user.name)
+            }
+          }}
         />
+
+        {/* Botón de logout para testing - Solo visible si está logueado */}
+        {isLoggedIn && (
+          <div className="fixed bottom-4 right-4">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                clearCurrentUser()
+                setIsLoggedIn(false)
+                setCurrentUser("Guest")
+                console.log("👤 [LOGOUT] Usuario deslogueado")
+              }}
+            >
+              Logout ({currentUser})
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
