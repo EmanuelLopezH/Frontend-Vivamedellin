@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { isCurrentUserAdmin } from "@/mocks/mockUsers"
 
 interface DeleteCommentDialogProps {
@@ -106,21 +105,22 @@ export function DeleteCommentDialog({
 
         {/* Selección de motivo SOLO para administradores */}
         {isAdmin && (
-          <div className="space-y-4 px-6">
+          <div className="space-y-4 p-6 border-t">
             <div className="space-y-2">
               <Label htmlFor="deletion-reason">Motivo de eliminación *</Label>
-              <Select value={selectedReason} onValueChange={setSelectedReason}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccione un motivo..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {ADMIN_DELETION_REASONS.map((reason) => (
-                    <SelectItem key={reason} value={reason}>
-                      {reason}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select
+                id="deletion-reason"
+                value={selectedReason}
+                onChange={(e) => setSelectedReason(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Seleccione un motivo...</option>
+                {ADMIN_DELETION_REASONS.map((reason) => (
+                  <option key={reason} value={reason}>
+                    {reason}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Campo de texto personalizado cuando selecciona "Otro" */}
@@ -133,6 +133,7 @@ export function DeleteCommentDialog({
                   value={customReason}
                   onChange={(e) => setCustomReason(e.target.value)}
                   maxLength={500}
+                  className="min-h-[80px]"
                 />
                 <div className="text-xs text-gray-500 text-right">
                   {customReason.length}/500 caracteres
