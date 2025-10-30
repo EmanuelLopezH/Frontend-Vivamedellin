@@ -33,16 +33,14 @@ export const commentService = {
 
   /**
    * Elimina un comentario específico
-   * Cumple con los criterios de la HU-06:
+   * Cumple con los criterios de la HU-05:
    * - Verifica permisos de eliminación
-   * - Registra en auditoría
    * - Elimina el comentario de la vista
    * 
    * @param commentId - ID del comentario a eliminar
-   * @param deletionReason - Motivo de la eliminación
    * @returns Promise<boolean> - true si se eliminó exitosamente
    */
-  async deleteComment(commentId: number, deletionReason: string): Promise<boolean> {
+  async deleteComment(commentId: number): Promise<boolean> {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
@@ -74,7 +72,7 @@ export const commentService = {
             commentContent: commentToDelete.content,
             deletedByName: currentUser.name,
             deletedByRole: currentUser.role,
-            deletionReason: deletionReason,
+            deletionReason: "Usuario eliminó su comentario",
             eventId: commentToDelete.eventId || 0,
           })
 
@@ -100,8 +98,7 @@ export const commentService = {
           localStorage.setItem("mockComments", JSON.stringify(mockComments))
 
           console.log(`🗑️ [DELETE] Comentario ${commentId} eliminado por ${currentUser.name} (${currentUser.role})`)
-          console.log(`📝 [REASON] ${deletionReason}`)
-          console.log(`📊 [COUNT] ${deletedCount} comentario(s) eliminado(s) en total (incluyendo respuestas)`)
+          console.log(` [COUNT] ${deletedCount} comentario(s) eliminado(s) en total (incluyendo respuestas)`)
           
           resolve(true)
         } catch (error) {
