@@ -123,4 +123,57 @@ export const commentService = {
     }, 100);
    });
  },
+ 
+  /**
+   * Actualiza el contenido de un comentario.
+   * - Verifica que el usuario esté autenticado
+   * - Solo el autor puede editar
+   * - Solo se permite editar dentro de 1 hora desde la creación
+   */
+  async updateComment(commentId: number, newContent: string): Promise<EventComment> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          const currentUser = getCurrentUser()
+          if (!currentUser) {
+            reject(new Error("Usuario no autenticado"))
+            return
+          }
+
+          const idx = mockComments.findIndex(c => c.id === commentId)
+          if (idx === -1) {
+            reject(new Error("Comentario no encontrado"))
+            return
+          }
+
+          const comment = mockComments[idx]
+
+          // Solo el autor puede editar
+          if (currentUser.name !== comment.name) {
+            reject(new Error("No tienes permisos para editar este comentario"))
+            return
+          }
+
+          // Límite de 1 hora desde createdAt
+          const createdMs = new Date(comment.createdAt).getTime()
+          if ((Date.now() - createdMs) > (60 * 60 * 1000)) {
+            reject(new Error("El periodo de edición (1 hora) ha expirado"))
+            return
+          }
+
+          // Actualizar contenido y marcar edición
+          comment.content = newContent
+          // Propiedad opcional editedAt
+          ;(comment as any).editedAt = new Date().toISOString()
+
+          // Persistir cambios
+          localStorage.setItem("mockComments", JSON.stringify(mockComments))
+
+          resolve(comment)
+        } catch (error) {
+          reject(error)
+        }
+      }, 300)
+    })
+  }
 };

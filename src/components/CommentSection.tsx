@@ -94,6 +94,25 @@ export function CommentSection({ eventId, isLoggedIn, name = "Guest", onLogin }:
     setCommentToDelete(null);
   };
 
+  /**
+   * Maneja la edición de un comentario
+   * Llama al servicio y refresca la lista
+   */
+  const handleEdit = async (id: number, newContent: string) => {
+    setSubmitting(true)
+    try {
+      await commentService.updateComment(id, newContent)
+      const updated = await commentService.getCommentsByEventId(eventId)
+      setComments(updated)
+      console.log(`✏️ Comentario ${id} actualizado`)
+    } catch (error) {
+      console.error("Error al actualizar comentario:", error)
+      alert((error as Error)?.message || "Error al actualizar")
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <section>
       <h3 className="text-xl font-semibold mb-6">Comments</h3>
@@ -116,6 +135,7 @@ export function CommentSection({ eventId, isLoggedIn, name = "Guest", onLogin }:
           replyTo={replyTo}
           onAddReply={(content, parentId) => handleAddComment(content, parentId)}
           onDelete={handleDeleteClick} // Nueva prop para manejar eliminación
+          onEdit={handleEdit}
           isLoggedIn={isLoggedIn}
           onLogin={onLogin}/>
       )}
