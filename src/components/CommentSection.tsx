@@ -59,14 +59,15 @@ export function CommentSection({ eventId, isLoggedIn, name = "Guest", onLogin }:
 
   /**
    * Confirma y ejecuta la eliminación del comentario
+   * @param reason - Motivo de eliminación (opcional, requerido solo para admins)
    */
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = async (reason?: string) => {
     if (!commentToDelete) return;
 
     setDeleting(true);
     try {
-      // Llamar al servicio de eliminación
-      await commentService.deleteComment(commentToDelete.id);
+      // Llamar al servicio de eliminación con motivo opcional
+      await commentService.deleteComment(commentToDelete.id, reason);
       
       // Actualizar la lista de comentarios
       const updated = await commentService.getCommentsByEventId(eventId);

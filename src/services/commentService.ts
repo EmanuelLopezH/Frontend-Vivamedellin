@@ -33,14 +33,16 @@ export const commentService = {
 
   /**
    * Elimina un comentario específico
-   * Cumple con los criterios de la HU-05:
+   * Cumple con los criterios de HU-05 (usuarios) y HU-Admin (administradores):
    * - Verifica permisos de eliminación
+   * - Registra auditoría completa para admins
    * - Elimina el comentario de la vista
    * 
    * @param commentId - ID del comentario a eliminar
+   * @param deletionReason - Motivo de eliminación (requerido para admins)
    * @returns Promise<boolean> - true si se eliminó exitosamente
    */
-  async deleteComment(commentId: number): Promise<boolean> {
+  async deleteComment(commentId: number, deletionReason?: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
@@ -66,13 +68,16 @@ export const commentService = {
           }
 
           // Registrar en auditoría ANTES de eliminar
+          const finalReason = deletionReason || 
+            (currentUser.role === 'admin' ? "Admin eliminó comentario" : "Usuario eliminó su comentario")
+          
           await createDeletionAuditLog({
             commentId: commentToDelete.id,
             commentAuthorName: commentToDelete.name,
             commentContent: commentToDelete.content,
             deletedByName: currentUser.name,
             deletedByRole: currentUser.role,
-            deletionReason: "Usuario eliminó su comentario",
+            deletionReason: finalReason,
             eventId: commentToDelete.eventId || 0,
           })
 
@@ -98,7 +103,8 @@ export const commentService = {
           localStorage.setItem("mockComments", JSON.stringify(mockComments))
 
           console.log(`🗑️ [DELETE] Comentario ${commentId} eliminado por ${currentUser.name} (${currentUser.role})`)
-          console.log(` [COUNT] ${deletedCount} comentario(s) eliminado(s) en total (incluyendo respuestas)`)
+          console.log(`📝 [REASON] ${finalReason}`)
+          console.log(`📊 [COUNT] ${deletedCount} comentario(s) eliminado(s) en total (incluyendo respuestas)`)
           
           resolve(true)
         } catch (error) {
