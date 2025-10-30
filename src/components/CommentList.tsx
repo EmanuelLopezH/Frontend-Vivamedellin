@@ -8,11 +8,12 @@ type Props = {
   replyTo: number | null;
   onAddReply: (content: string, parentId: number) => void;
   onDelete?: (comment: EventComment) => void; // Nueva prop para eliminar comentarios
+  onEdit?: (id: number, newContent: string) => void | Promise<void>;
   isLoggedIn: boolean;
   onLogin?: () => void;
  };
 
-export function CommentList({ comments, onReply, replyTo, onAddReply, onDelete, isLoggedIn, onLogin, }: Props) {
+export function CommentList({ comments, onReply, replyTo, onAddReply, onDelete, onEdit, isLoggedIn, onLogin, }: Props) {
   const topLevel = comments.filter((c) => !c.parentId);
 
   return (
@@ -23,6 +24,7 @@ export function CommentList({ comments, onReply, replyTo, onAddReply, onDelete, 
             {...comment} 
             onReply={() => onReply?.(comment.id)} 
             onDelete={() => onDelete?.(comment)}
+            onEdit={(id, newContent) => onEdit?.(id, newContent)}
           />
 
           {/* Respuestas */}
@@ -35,6 +37,7 @@ export function CommentList({ comments, onReply, replyTo, onAddReply, onDelete, 
                     {...reply} 
                     onReply={() => onReply?.(reply.id)}
                     onDelete={() => onDelete?.(reply)}
+                    onEdit={(id, newContent) => onEdit?.(id, newContent)}
                   />
                 </li>
               ))}

@@ -5,6 +5,7 @@ export type EventComment = {
   createdAt: string;
   content: string;
   avatarUrl?: string; //opcional
+  editedAt?: string; // timestamp opcional cuando fue editado
   parentId?: number; // para respuestas a comentarios
 };
 
