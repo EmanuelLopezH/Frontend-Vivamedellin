@@ -314,6 +314,10 @@ const Index = () => {
         open={loginOpen}
         onClose={() => setLoginOpen(false)}
         onLoginSuccess={handleLoginSuccess}
+        onSwitchToRegister={() => {
+          setLoginOpen(false)
+          setRegisterOpen(true)
+        }}
       />
 
       <RegisterDialog 
