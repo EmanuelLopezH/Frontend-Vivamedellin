@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { LoginDialog } from '@/components/LoginDialog';
 import { RegisterDialog } from '@/components/RegisterDialog';
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 const Index = () => {
+  const navigate = useNavigate();
   const [loginOpen, setLoginOpen] = useState(false);
   const [registerOpen, setRegisterOpen] = useState(false);
 
@@ -32,43 +34,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
-      {/* Header / Navbar */}
-      <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <MapPin className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              ViveMedellín
-            </h1>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="ghost"
-              onClick={() => window.location.href = '/event-01'}
-              className="hidden md:inline-flex"
-            >
-              Eventos
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => setLoginOpen(true)}
-              className="hover:bg-blue-50"
-            >
-              Iniciar Sesión
-            </Button>
-            <Button 
-              onClick={() => setRegisterOpen(true)}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-            >
-              Registrarse
-            </Button>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 md:py-32">
         <div className="max-w-4xl mx-auto text-center space-y-8">

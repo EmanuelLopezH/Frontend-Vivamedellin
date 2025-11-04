@@ -72,9 +72,9 @@ export function LoginDialog({ open, onClose, onLoginSuccess, onSwitchToRegister 
         onClose()
         onLoginSuccess()
 
-        // Redireccionar a la página principal
+        // Redireccionar a la página de posts
         setTimeout(() => {
-          window.location.href = "/"
+          window.location.href = "/posts"
         }, 100)
 
       } else {
