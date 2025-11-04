@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { LoginDialog } from "@/components/LoginDialog"
 import { RegisterDialog } from "@/components/RegisterDialog"
+import { NotificationsDropdown } from "@/components/NotificationsDropdown"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,7 +50,6 @@ export function Navbar() {
   const [user, setUser] = useState<UserData | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [notificationsCount] = useState(0) // TODO: Conectar con backend de notificaciones
   const [loginOpen, setLoginOpen] = useState(false)
   const [registerOpen, setRegisterOpen] = useState(false)
 
@@ -198,22 +198,7 @@ export function Navbar() {
                 </Button>
 
                 {/* Notificaciones */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative"
-                  onClick={() => navigate("/notifications")}
-                >
-                  <Bell className="h-5 w-5" />
-                  {notificationsCount > 0 && (
-                    <Badge
-                      variant="destructive"
-                      className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                    >
-                      {notificationsCount > 9 ? "9+" : notificationsCount}
-                    </Badge>
-                  )}
-                </Button>
+                <NotificationsDropdown />
 
                 {/* Avatar + Dropdown */}
                 <DropdownMenu>
@@ -253,7 +238,7 @@ export function Navbar() {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    <DropdownMenuItem onClick={() => navigate(`/user/${user.id}`)}>
                       <User className="mr-2 h-4 w-4" />
                       Mi perfil
                     </DropdownMenuItem>
@@ -389,16 +374,11 @@ export function Navbar() {
                         >
                           <Bell className="h-4 w-4 mr-2" />
                           Notificaciones
-                          {notificationsCount > 0 && (
-                            <Badge variant="destructive" className="ml-auto">
-                              {notificationsCount}
-                            </Badge>
-                          )}
                         </Button>
                         <Button
                           variant="ghost"
                           className="w-full justify-start"
-                          onClick={() => navigate("/profile")}
+                          onClick={() => navigate(`/user/${user.id}`)}
                         >
                           <User className="h-4 w-4 mr-2" />
                           Mi perfil
