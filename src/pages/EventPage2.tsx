@@ -40,13 +40,6 @@ export default function EventPage() {
       <EventBanner2 />
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
         <h2 className="text-2xl font-semibold">{Event.title}</h2>
-        
-        <Button className="bg-white text-slate-900 mr-4 shadow-lg">
-          <Star className="mr-2 h-4 w-4" /> I'm Interested</Button>
-        <Button className="bg-white text-slate-900 mr-4 shadow-lg">
-          <Calendar className="mr-2 h-4 w-4" /> Add to Calendar</Button>
-        <Button className="bg-white text-slate-900 mr-4 shadow-lg">
-          <Share2 className="mr-2 h-4 w-4" /> Share Event</Button>
 
         <div className="text-slate-600 space-y-4">
           <p>{Event.description}</p>
