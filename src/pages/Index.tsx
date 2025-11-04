@@ -320,6 +320,10 @@ const Index = () => {
         open={registerOpen}
         onClose={() => setRegisterOpen(false)}
         onRegisterSuccess={handleRegisterSuccess}
+        onSwitchToLogin={() => {
+          setRegisterOpen(false)
+          setLoginOpen(true)
+        }}
       />
     </div>
   );
