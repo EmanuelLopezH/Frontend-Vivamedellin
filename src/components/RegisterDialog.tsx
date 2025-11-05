@@ -1,38 +1,50 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { User, CheckCircle2, XCircle, AlertCircle } from "lucide-react"
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { User, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 
 interface RegisterDialogProps {
-  open: boolean
-  onClose: () => void
-  onRegisterSuccess: () => void
-  onSwitchToLogin?: () => void
+  open: boolean;
+  onClose: () => void;
+  onRegisterSuccess: () => void;
+  onSwitchToLogin?: () => void;
 }
 
-export function RegisterDialog({ open, onClose, onRegisterSuccess, onSwitchToLogin }: RegisterDialogProps) {
+export function RegisterDialog({
+  open,
+  onClose,
+  onRegisterSuccess,
+  onSwitchToLogin,
+}: RegisterDialogProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    about: ""
-  })
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+    about: "",
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Validación en tiempo real de la contraseña
   const validatePassword = (password: string) => {
-    const hasUpperCase = /[A-Z]/.test(password)
-    const hasLowerCase = /[a-z]/.test(password)
-    const hasNumber = /[0-9]/.test(password)
-    const hasSpecialChar = /[@$!%*?&]/.test(password)
-    const hasValidLength = password.length >= 8 && password.length <= 20
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[@$!%*?&]/.test(password);
+    const hasValidLength = password.length >= 8 && password.length <= 20;
 
     return {
       hasUpperCase,
@@ -40,51 +52,58 @@ export function RegisterDialog({ open, onClose, onRegisterSuccess, onSwitchToLog
       hasNumber,
       hasSpecialChar,
       hasValidLength,
-      isValid: hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && hasValidLength
-    }
-  }
+      isValid:
+        hasUpperCase &&
+        hasLowerCase &&
+        hasNumber &&
+        hasSpecialChar &&
+        hasValidLength,
+    };
+  };
 
-  const passwordValidation = validatePassword(formData.password)
+  const passwordValidation = validatePassword(formData.password);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-    setError(null)
-    setSuccess(null)
-  }
+      [e.target.name]: e.target.value,
+    });
+    setError(null);
+    setSuccess(null);
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(null)
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
 
     // Validaciones del frontend
     if (formData.name.length < 3) {
-      setError("El nombre debe tener al menos 3 caracteres")
-      return
+      setError("El nombre debe tener al menos 3 caracteres");
+      return;
     }
 
     if (!formData.email.includes("@") || !formData.email.includes(".")) {
-      setError("Por favor ingresa un email válido")
-      return
+      setError("Por favor ingresa un email válido");
+      return;
     }
 
     if (!passwordValidation.isValid) {
-      setError("La contraseña no cumple con todos los requisitos")
-      return
+      setError("La contraseña no cumple con todos los requisitos");
+      return;
     }
 
     if (formData.about && formData.about.length < 10) {
-      setError("La descripción debe tener al menos 10 caracteres")
-      return
+      setError("La descripción debe tener al menos 10 caracteres");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8081/api/users/register", {
+      const response = await fetch("http://localhost:8080/api/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -93,51 +112,52 @@ export function RegisterDialog({ open, onClose, onRegisterSuccess, onSwitchToLog
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          about: formData.about || undefined
+          about: formData.about || undefined,
         }),
-      })
+      });
 
       if (response.ok) {
-        const data = await response.json()
-        console.log("✅ Usuario registrado exitosamente:", data)
-        
-        setSuccess("¡Cuenta creada exitosamente! Redirigiendo...")
-        
+        const data = await response.json();
+        console.log("✅ Usuario registrado exitosamente:", data);
+
+        setSuccess("¡Cuenta creada exitosamente! Redirigiendo...");
+
         // Limpiar formulario
         setFormData({
           name: "",
           email: "",
           password: "",
-          about: ""
-        })
+          about: "",
+        });
 
         // Esperar 2 segundos y cerrar el modal
         setTimeout(() => {
-          onRegisterSuccess()
-          onClose()
-        }, 2000)
-
+          onRegisterSuccess();
+          onClose();
+        }, 2000);
       } else {
         // Manejar errores del servidor
-        const errorData = await response.json().catch(() => null)
-        
+        const errorData = await response.json().catch(() => null);
+
         if (response.status === 409) {
-          setError(errorData?.message || "Este email ya está registrado")
+          setError(errorData?.message || "Este email ya está registrado");
         } else if (response.status === 400) {
-          setError(errorData?.message || "Datos inválidos. Verifica los campos")
+          setError(
+            errorData?.message || "Datos inválidos. Verifica los campos"
+          );
         } else if (response.status === 500) {
-          setError("Error del servidor. Intenta de nuevo más tarde")
+          setError("Error del servidor. Intenta de nuevo más tarde");
         } else {
-          setError("Error al crear cuenta. Por favor intenta de nuevo")
+          setError("Error al crear cuenta. Por favor intenta de nuevo");
         }
       }
     } catch (err) {
-      console.error("Error en el registro:", err)
-      setError("No se pudo conectar con el servidor. Verifica tu conexión")
+      console.error("Error en el registro:", err);
+      setError("No se pudo conectar con el servidor. Verifica tu conexión");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -213,7 +233,7 @@ export function RegisterDialog({ open, onClose, onRegisterSuccess, onSwitchToLog
               className="h-11"
               required
             />
-            
+
             {/* Requisitos de contraseña */}
             {formData.password && (
               <div className="space-y-1 p-3 bg-slate-50 rounded-lg border border-slate-200">
@@ -221,24 +241,24 @@ export function RegisterDialog({ open, onClose, onRegisterSuccess, onSwitchToLog
                   Requisitos de contraseña:
                 </p>
                 <div className="space-y-1">
-                  <PasswordRequirement 
-                    met={passwordValidation.hasValidLength} 
+                  <PasswordRequirement
+                    met={passwordValidation.hasValidLength}
                     text="8-20 caracteres"
                   />
-                  <PasswordRequirement 
-                    met={passwordValidation.hasUpperCase} 
+                  <PasswordRequirement
+                    met={passwordValidation.hasUpperCase}
                     text="1 letra mayúscula"
                   />
-                  <PasswordRequirement 
-                    met={passwordValidation.hasLowerCase} 
+                  <PasswordRequirement
+                    met={passwordValidation.hasLowerCase}
                     text="1 letra minúscula"
                   />
-                  <PasswordRequirement 
-                    met={passwordValidation.hasNumber} 
+                  <PasswordRequirement
+                    met={passwordValidation.hasNumber}
                     text="1 número"
                   />
-                  <PasswordRequirement 
-                    met={passwordValidation.hasSpecialChar} 
+                  <PasswordRequirement
+                    met={passwordValidation.hasSpecialChar}
                     text="1 carácter especial (@$!%*?&)"
                   />
                 </div>
@@ -292,17 +312,17 @@ export function RegisterDialog({ open, onClose, onRegisterSuccess, onSwitchToLog
 
           {/* Botones */}
           <DialogFooter className="gap-3 sm:gap-3 flex-col sm:flex-row">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={onClose}
               disabled={loading}
               className="w-full sm:w-auto order-2 sm:order-1"
             >
               Cancelar
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={loading || !passwordValidation.isValid}
               className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 order-1 sm:order-2"
             >
@@ -322,8 +342,8 @@ export function RegisterDialog({ open, onClose, onRegisterSuccess, onSwitchToLog
             <button
               type="button"
               onClick={() => {
-                onClose()
-                onSwitchToLogin?.()
+                onClose();
+                onSwitchToLogin?.();
               }}
               className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
               disabled={loading}
@@ -337,7 +357,7 @@ export function RegisterDialog({ open, onClose, onRegisterSuccess, onSwitchToLog
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 // Componente auxiliar para mostrar requisitos de contraseña
@@ -349,9 +369,7 @@ function PasswordRequirement({ met, text }: { met: boolean; text: string }) {
       ) : (
         <XCircle className="h-3.5 w-3.5 text-slate-400" />
       )}
-      <span className={met ? "text-green-700" : "text-slate-600"}>
-        {text}
-      </span>
+      <span className={met ? "text-green-700" : "text-slate-600"}>{text}</span>
     </div>
-  )
+  );
 }

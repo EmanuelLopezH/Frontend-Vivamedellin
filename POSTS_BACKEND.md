@@ -2,25 +2,28 @@
 
 ## 🚀 **NUEVO**: Integración con Backend Real
 
-El sistema ahora está **completamente integrado con el backend de Spring Boot** en `http://localhost:8081/api`.
+El sistema ahora está **completamente integrado con el backend de Spring Boot** en `http://localhost:8080/api`.
 
 ---
 
 ## 📋 Cambios Principales
 
 ### **✅ Diseño Estilo Reddit/Twitter**
+
 - Grid responsive: 1 columna (mobile) → 2 columnas (tablet) → 3 columnas (desktop)
 - Tarjetas visuales con imagen destacada
 - Badges de categoría con colores personalizados
 - Hover effects y transiciones suaves
 
 ### **✅ Backend Real**
+
 - Conexión completa con API REST
 - Paginación funcional (pageNumber, pageSize)
 - Sin autenticación para ver posts (público)
 - Con autenticación para crear, guardar y comentar
 
 ### **✅ Nuevas Funcionalidades**
+
 - Filtros por categoría
 - Ordenamiento (Recientes / Más comentados / Más guardados)
 - Paginación con botones Anterior/Siguiente
@@ -35,12 +38,14 @@ El sistema ahora está **completamente integrado con el backend de Spring Boot**
 ### **Nuevos Componentes:**
 
 1. **`PostsFeed.tsx`** (antes `Posts.tsx`)
+
    - Página principal del feed con grid
    - Filtros y ordenamiento
    - Paginación
    - Navbar mejorado con indicador de Admin
 
 2. **`PostCardGrid.tsx`** (reemplaza `PostCard.tsx`)
+
    - Tarjeta estilo Reddit con imagen grande
    - Badge de categoría
    - Extracto de contenido (150 caracteres)
@@ -48,6 +53,7 @@ El sistema ahora está **completamente integrado con el backend de Spring Boot**
    - Botones adicionales para Admin/Autor: Editar, Eliminar
 
 3. **`PostCardSkeleton.tsx`**
+
    - Loading skeleton para mejor UX
    - Grid de 6-9 skeletons mientras carga
 
@@ -60,13 +66,15 @@ El sistema ahora está **completamente integrado con el backend de Spring Boot**
 ## 🔌 Endpoints del Backend
 
 ### **GET /api/posts**
+
 ```
-URL: http://localhost:8081/api/posts?pageNumber=0&pageSize=10
+URL: http://localhost:8080/api/posts?pageNumber=0&pageSize=10
 Método: GET
 Auth: NO requerida (público)
 ```
 
 **Response:**
+
 ```json
 {
   "content": [
@@ -75,7 +83,7 @@ Auth: NO requerida (público)
       "postTitle": "Título del post",
       "content": "Contenido del evento...",
       "imageName": "default.png",
-      "imageUrl": "http://localhost:8081/api/posts/images/default.png",
+      "imageUrl": "http://localhost:8080/api/posts/images/default.png",
       "creationDate": "2025-11-03 04:13:40",
       "user": {
         "id": 1,
@@ -99,8 +107,9 @@ Auth: NO requerida (público)
 ```
 
 ### **POST /api/posts**
+
 ```
-URL: http://localhost:8081/api/posts
+URL: http://localhost:8080/api/posts
 Método: POST
 Auth: Bearer Token (requerido)
 Body:
@@ -113,22 +122,25 @@ Body:
 ```
 
 ### **POST /api/posts/{postId}/save**
+
 ```
-URL: http://localhost:8081/api/posts/1/save
+URL: http://localhost:8080/api/posts/1/save
 Método: POST
 Auth: Bearer Token (requerido)
 ```
 
 ### **GET /api/posts/{postId}/comments**
+
 ```
-URL: http://localhost:8081/api/posts/1/comments
+URL: http://localhost:8080/api/posts/1/comments
 Método: GET
 Auth: NO requerida
 ```
 
 ### **POST /api/posts/{postId}/comments**
+
 ```
-URL: http://localhost:8081/api/posts/1/comments
+URL: http://localhost:8080/api/posts/1/comments
 Método: POST
 Auth: Bearer Token (requerido)
 Body:
@@ -139,8 +151,9 @@ Body:
 ```
 
 ### **DELETE /api/posts/{postId}**
+
 ```
-URL: http://localhost:8081/api/posts/1
+URL: http://localhost:8080/api/posts/1
 Método: DELETE
 Auth: Bearer Token (requerido)
 Permisos: Solo Admin o Autor del post
@@ -186,6 +199,7 @@ Default:      bg-slate-100 text-slate-700
 ## 🔐 Sistema de Permisos
 
 ### **Usuario NO logueado:**
+
 - ✅ Puede ver todos los posts
 - ✅ Puede navegar por categorías
 - ✅ Puede ver detalles de posts
@@ -194,6 +208,7 @@ Default:      bg-slate-100 text-slate-700
 - ❌ NO puede crear posts
 
 ### **Usuario logueado:**
+
 - ✅ Todo lo de NO logueado +
 - ✅ Puede guardar/favoritos
 - ✅ Puede comentar
@@ -201,6 +216,7 @@ Default:      bg-slate-100 text-slate-700
 - ⚠️ Solo puede editar/eliminar SUS propios posts
 
 ### **Admin:**
+
 - ✅ Todo lo de Usuario logueado +
 - ✅ Puede editar CUALQUIER post
 - ✅ Puede eliminar CUALQUIER post
@@ -211,18 +227,21 @@ Default:      bg-slate-100 text-slate-700
 ## 🎯 Funcionalidades Implementadas
 
 ### **Filtros y Ordenamiento:**
+
 - [x] Filtro por categoría (dropdown)
 - [x] Todas las categorías / Música / Deportes / Cultura / etc.
 - [x] Ordenar por: Más recientes / Más comentados / Más guardados
 - [x] Filtros persistentes al cambiar de página
 
 ### **Paginación:**
+
 - [x] Botones Anterior / Siguiente
 - [x] Indicador "Página X de Y"
 - [x] Deshabilitar botones en primera/última página
 - [x] Cargar 9 posts por página (grid 3x3)
 
 ### **Interacciones:**
+
 - [x] Click en tarjeta → Navegar a /post/{postId}
 - [x] Guardar post (requiere login)
 - [x] Compartir (copia URL al portapapeles)
@@ -230,6 +249,7 @@ Default:      bg-slate-100 text-slate-700
 - [x] Eliminar post con confirmación (solo Admin/Autor)
 
 ### **Estados:**
+
 - [x] Loading skeletons (grid de 9)
 - [x] Estado vacío ("No hay posts todavía")
 - [x] Error handling con try/catch
@@ -240,6 +260,7 @@ Default:      bg-slate-100 text-slate-700
 ## 📱 Responsive Design
 
 ### **Grid Breakpoints:**
+
 ```css
 Mobile (< 768px):      1 columna
 Tablet (768px-1024px): 2 columnas
@@ -247,6 +268,7 @@ Desktop (> 1024px):    3 columnas
 ```
 
 ### **Navbar:**
+
 - Mobile: Logo + Menú hamburguesa (futuro)
 - Desktop: Logo + Inicio + Eventos + Crear Post + Usuario/Login
 
@@ -255,6 +277,7 @@ Desktop (> 1024px):    3 columnas
 ## 🧪 Cómo Probar
 
 ### **1. Ver Posts (Sin Login)**
+
 ```
 1. Ve a http://localhost:8080/posts
 2. Deberías ver el grid de posts del backend
@@ -264,6 +287,7 @@ Desktop (> 1024px):    3 columnas
 ```
 
 ### **2. Guardar Post (Con Login)**
+
 ```
 1. Haz login
 2. Ve a /posts
@@ -272,6 +296,7 @@ Desktop (> 1024px):    3 columnas
 ```
 
 ### **3. Crear Post (Con Login)**
+
 ```
 1. Haz login
 2. Click en "Crear Post" en navbar
@@ -280,6 +305,7 @@ Desktop (> 1024px):    3 columnas
 ```
 
 ### **4. Editar/Eliminar (Admin o Autor)**
+
 ```
 1. Login como admin o autor del post
 2. Deberías ver botones ✏️ y 🗑️
@@ -287,6 +313,7 @@ Desktop (> 1024px):    3 columnas
 ```
 
 ### **5. Paginación**
+
 ```
 1. Si hay más de 9 posts en el backend
 2. Deberías ver botones "Anterior" y "Siguiente"
@@ -299,12 +326,13 @@ Desktop (> 1024px):    3 columnas
 ## 🔄 Flujo de Datos
 
 ### **Carga de Posts:**
+
 ```
 PostsFeed.tsx
   ↓
 postServiceBackend.getPosts(page, size)
   ↓
-fetch("http://localhost:8081/api/posts?pageNumber=0&pageSize=9")
+fetch("http://localhost:8080/api/posts?pageNumber=0&pageSize=9")
   ↓
 Backend Response → Transform to Post[]
   ↓
@@ -314,12 +342,13 @@ PostCardGrid renderiza cada post
 ```
 
 ### **Guardar Post:**
+
 ```
 PostCardGrid.tsx (click Guardar)
   ↓
 postServiceBackend.toggleSave(postId)
   ↓
-fetch("http://localhost:8081/api/posts/1/save", {
+fetch("http://localhost:8080/api/posts/1/save", {
   headers: { Authorization: Bearer token }
 })
   ↓
@@ -331,6 +360,7 @@ onUpdate() → recarga posts
 ## 📦 Archivos Modificados/Creados
 
 ### **Nuevos:**
+
 - ✅ `src/pages/PostsFeed.tsx` - Página principal del feed
 - ✅ `src/components/PostCardGrid.tsx` - Tarjeta estilo Reddit
 - ✅ `src/components/PostCardSkeleton.tsx` - Loading skeletons
@@ -338,11 +368,13 @@ onUpdate() → recarga posts
 - ✅ `POSTS_BACKEND.md` - Esta documentación
 
 ### **Modificados:**
+
 - ✅ `src/types/post.ts` - Agregado `postTitle`, `category`, `isSaved`
 - ✅ `src/App.tsx` - Ruta `/posts` ahora usa `PostsFeed`
 - ✅ `src/components/LoginDialog.tsx` - Redirige a `/posts` después de login
 
 ### **Deprecados (aún existen pero no se usan):**
+
 - ⚠️ `src/pages/Posts.tsx` - Reemplazado por PostsFeed.tsx
 - ⚠️ `src/components/PostCard.tsx` - Reemplazado por PostCardGrid.tsx
 - ⚠️ `src/components/CreatePost.tsx` - Pendiente mover a página separada
@@ -353,6 +385,7 @@ onUpdate() → recarga posts
 ## 🐛 Manejo de Errores
 
 ### **Backend no disponible:**
+
 ```typescript
 try {
   const response = await fetch(...)
@@ -364,18 +397,20 @@ try {
 ```
 
 ### **Token expirado:**
+
 ```typescript
 if (response.status === 401) {
-  localStorage.removeItem("token")
-  localStorage.removeItem("user")
-  navigate("/")
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  navigate("/");
 }
 ```
 
 ### **Sin permisos:**
+
 ```typescript
 if (response.status === 403) {
-  alert("No tienes permisos para esta acción")
+  alert("No tienes permisos para esta acción");
 }
 ```
 
@@ -384,6 +419,7 @@ if (response.status === 403) {
 ## 🔜 Próximos Pasos
 
 ### **Por Implementar:**
+
 - [ ] Página individual de post (`/post/{id}`)
 - [ ] Página de crear post (`/create-post`)
 - [ ] Página de editar post (`/post/{id}/edit`)
@@ -396,6 +432,7 @@ if (response.status === 403) {
 - [ ] Posts guardados (página dedicada)
 
 ### **Mejoras de UX:**
+
 - [ ] Toast notifications en lugar de `alert()`
 - [ ] Confirmación visual al guardar/compartir
 - [ ] Animaciones al cargar posts
@@ -407,6 +444,7 @@ if (response.status === 403) {
 ## 🎉 Resumen
 
 El sistema ahora:
+
 - ✅ **Conecta con backend real** (Spring Boot)
 - ✅ **Diseño moderno** estilo Reddit/Twitter
 - ✅ **Grid responsive** 1→2→3 columnas

@@ -1,6 +1,6 @@
 import type { Post, PostComment } from "@/types/post"
 
-const API_BASE_URL = "http://localhost:8081/api"
+const API_BASE_URL = "http://localhost:8080/api"
 
 interface BackendPostsResponse {
   content: Array<{

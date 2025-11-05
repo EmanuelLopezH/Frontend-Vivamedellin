@@ -9,10 +9,12 @@ Componente reutilizable de React con Tailwind CSS para guardar y dejar de guarda
 ## 🏗️ Arquitectura
 
 ### **Archivos Creados:**
+
 - **`SaveButton.tsx`** - Componente principal del botón guardar
 - **`savedPostService.ts`** - Servicio para operaciones de guardado
 
 ### **Archivos Modificados:**
+
 - **`PostCardGrid.tsx`** - Reemplazado botón guardar antiguo con SaveButton
 - **`PostDetail.tsx`** - Reemplazado botón guardar antiguo con SaveButton
 
@@ -21,9 +23,10 @@ Componente reutilizable de React con Tailwind CSS para guardar y dejar de guarda
 ## 🔌 Endpoints del Backend
 
 ### **1. Guardar Post:**
+
 ```
-POST http://localhost:8081/api/saved-posts/{postId}
-Headers: 
+POST http://localhost:8080/api/saved-posts/{postId}
+Headers:
   - Authorization: Bearer {token}
 
 Response (200):
@@ -33,9 +36,10 @@ Response (200):
 ```
 
 ### **2. Dejar de Guardar:**
+
 ```
-DELETE http://localhost:8081/api/saved-posts/{postId}
-Headers: 
+DELETE http://localhost:8080/api/saved-posts/{postId}
+Headers:
   - Authorization: Bearer {token}
 
 Response (200):
@@ -45,9 +49,10 @@ Response (200):
 ```
 
 ### **3. Verificar si Está Guardado:**
+
 ```
-GET http://localhost:8081/api/saved-posts/{postId}/check
-Headers: 
+GET http://localhost:8080/api/saved-posts/{postId}/check
+Headers:
   - Authorization: Bearer {token}
 
 Response (200):
@@ -62,20 +67,21 @@ Response (200):
 
 ```typescript
 interface SaveButtonProps {
-  postId: number                      // ID del post (requerido)
-  initialSaved?: boolean              // Estado inicial (opcional, default: false)
-  variant?: "default" | "ghost" | "outline" // Variante del botón (opcional, default: "outline")
-  size?: "default" | "sm" | "lg" | "icon"   // Tamaño del botón (opcional, default: "sm")
-  showLabel?: boolean                 // Mostrar texto "Guardar" (opcional, default: false)
+  postId: number; // ID del post (requerido)
+  initialSaved?: boolean; // Estado inicial (opcional, default: false)
+  variant?: "default" | "ghost" | "outline"; // Variante del botón (opcional, default: "outline")
+  size?: "default" | "sm" | "lg" | "icon"; // Tamaño del botón (opcional, default: "sm")
+  showLabel?: boolean; // Mostrar texto "Guardar" (opcional, default: false)
 }
 ```
 
 ### **Valores por Defecto:**
+
 ```typescript
-initialSaved = false
-variant = "outline"
-size = "sm"
-showLabel = false
+initialSaved = false;
+variant = "outline";
+size = "sm";
+showLabel = false;
 ```
 
 ---
@@ -83,17 +89,20 @@ showLabel = false
 ## ✨ Funcionalidades Implementadas
 
 ### **1. Validación de Autenticación**
+
 - ✅ Lee `token` y `user` de `localStorage`
 - ✅ Si NO está logueado: muestra toast "Inicia sesión"
 - ✅ Tooltip dice "Inicia sesión para guardar"
 
 ### **2. Verificación de Estado Guardado**
+
 - ✅ Al montar, hace GET a `/saved-posts/{postId}/check`
 - ✅ Actualiza estado `isSaved` según respuesta
 - ✅ Muestra spinner mientras verifica
 - ✅ Si falla o no hay sesión → asume `false`
 
 ### **3. Toggle Guardar/No Guardar**
+
 - ✅ Click → POST para guardar
 - ✅ Click de nuevo → DELETE para quitar
 - ✅ Actualiza estado local inmediatamente
@@ -102,6 +111,7 @@ showLabel = false
 ### **4. Estados Visuales**
 
 #### **No Guardado:**
+
 ```
 🔖 Bookmark outline (sin relleno)
 Border: slate-200
@@ -109,6 +119,7 @@ Text: slate-600
 ```
 
 #### **Guardado:**
+
 ```
 🔖 Bookmark filled (relleno azul)
 Border: blue-300
@@ -117,34 +128,40 @@ Animación: zoom-in-50
 ```
 
 #### **Loading (Verificando):**
+
 ```
 ⏳ Spinner animado
 Botón deshabilitado
 ```
 
 #### **Loading (Guardando):**
+
 ```
 ⏳ Spinner animado
 Botón deshabilitado
 ```
 
 ### **5. Tooltips**
+
 - ✅ **No logueado**: "Inicia sesión para guardar"
 - ✅ **No guardado**: "Guardar"
 - ✅ **Guardado**: "Guardado"
 
 ### **6. Animaciones**
+
 - ✅ Zoom-in al marcar como guardado
 - ✅ Transición suave de colores
 - ✅ Spinner animado al cargar
 
 ### **7. Toast Notifications**
+
 - ✅ **Guardado**: "Post guardado" (success)
 - ✅ **Quitado**: "Post eliminado de guardados" (success)
 - ✅ **No logueado**: "Inicia sesión" (destructive)
 - ✅ **Error**: Mensaje descriptivo (destructive)
 
 ### **8. Manejo de Errores**
+
 - ✅ 401: Sesión expirada
 - ✅ 403: Sin permisos
 - ✅ 404: Post no existe
@@ -156,6 +173,7 @@ Botón deshabilitado
 ## 🎨 Diseño del Componente
 
 ### **Variante: outline + sin label (default en cards):**
+
 ```
 ┌──────────┐
 │  🔖      │  ← Outline, sin relleno
@@ -164,6 +182,7 @@ Hover: tooltip "Guardar"
 ```
 
 ### **Variante: outline + con label (en post detail):**
+
 ```
 ┌──────────────────┐
 │  🔖  Guardar     │  ← Con texto
@@ -171,6 +190,7 @@ Hover: tooltip "Guardar"
 ```
 
 ### **Estado Guardado:**
+
 ```
 ┌──────────────────┐
 │  🔖  Guardado    │  ← Relleno azul + border azul
@@ -178,6 +198,7 @@ Hover: tooltip "Guardar"
 ```
 
 ### **Estado Loading:**
+
 ```
 ┌──────────────────┐
 │  ⏳  ...         │  ← Spinner animado
@@ -189,6 +210,7 @@ Hover: tooltip "Guardar"
 ## 🔄 Flujo de Datos
 
 ### **1. Montaje del Componente:**
+
 ```
 SaveButton monta
   ↓
@@ -211,6 +233,7 @@ useEffect #2: Verifica si está guardado
 ```
 
 ### **2. Usuario Click en Botón:**
+
 ```
 handleToggleSave()
   ↓
@@ -238,6 +261,7 @@ setIsLoading(false)
 ## 🎯 Uso del Componente
 
 ### **1. En PostCardGrid (tarjeta de post):**
+
 ```tsx
 <SaveButton
   postId={post.id}
@@ -249,6 +273,7 @@ setIsLoading(false)
 ```
 
 ### **2. En PostDetail (página de detalle):**
+
 ```tsx
 <SaveButton
   postId={post.id}
@@ -260,15 +285,13 @@ setIsLoading(false)
 ```
 
 ### **3. Botón Solo Icono:**
+
 ```tsx
-<SaveButton
-  postId={5}
-  variant="outline"
-  size="icon"
-/>
+<SaveButton postId={5} variant="outline" size="icon" />
 ```
 
 ### **4. Con Estado Inicial:**
+
 ```tsx
 <SaveButton
   postId={10}
@@ -284,35 +307,37 @@ setIsLoading(false)
 ## 🔐 Validaciones Implementadas
 
 ### **Validación de Login:**
+
 ```typescript
-const token = localStorage.getItem("token")
-const userString = localStorage.getItem("user")
+const token = localStorage.getItem("token");
+const userString = localStorage.getItem("user");
 
 if (!token || !userString) {
   toast({
     variant: "destructive",
     title: "Inicia sesión",
-    description: "Debes iniciar sesión para guardar posts."
-  })
-  return
+    description: "Debes iniciar sesión para guardar posts.",
+  });
+  return;
 }
 ```
 
 ### **Validación de Respuesta del Backend:**
+
 ```typescript
 // En savePost
 if (response.status === 401) {
-  throw new Error("Tu sesión ha expirado...")
+  throw new Error("Tu sesión ha expirado...");
 } else if (response.status === 403) {
-  throw new Error("No tienes permisos...")
+  throw new Error("No tienes permisos...");
 } else if (response.status === 404) {
-  throw new Error("El post no existe...")
+  throw new Error("El post no existe...");
 }
 
 // En checkIfSaved
 if (response.status === 401) {
   // Sesión expirada, asume no guardado
-  return false
+  return false;
 }
 ```
 
@@ -321,6 +346,7 @@ if (response.status === 401) {
 ## 🐛 Manejo de Errores
 
 ### **Errores HTTP:**
+
 ```typescript
 401 Unauthorized → "Tu sesión ha expirado. Inicia sesión nuevamente."
 403 Forbidden → "No tienes permisos para guardar posts." / "No tienes permisos."
@@ -330,6 +356,7 @@ Network Error → Muestra error original
 ```
 
 ### **Errores en Verificación:**
+
 ```typescript
 checkIfSaved() falla → Asume false (no guardado)
 No muestra error al usuario (silencioso)
@@ -341,6 +368,7 @@ Log en consola para debugging
 ## 🧪 Cómo Probar
 
 ### **1. Guardar Post (Con Login):**
+
 ```
 1. Login
 2. Ve a /posts
@@ -352,6 +380,7 @@ Log en consola para debugging
 ```
 
 ### **2. Quitar de Guardados:**
+
 ```
 1. En un post guardado (🔖 azul)
 2. Click de nuevo
@@ -361,6 +390,7 @@ Log en consola para debugging
 ```
 
 ### **3. Guardar Post (Sin Login):**
+
 ```
 1. Logout si estás logueado
 2. Ve a /posts
@@ -371,6 +401,7 @@ Log en consola para debugging
 ```
 
 ### **4. Estado Inicial Guardado:**
+
 ```
 1. Login
 2. Guarda un post
@@ -380,6 +411,7 @@ Log en consola para debugging
 ```
 
 ### **5. Animación al Guardar:**
+
 ```
 1. Click en botón guardar (no guardado)
 2. Icono hace zoom-in
@@ -388,6 +420,7 @@ Log en consola para debugging
 ```
 
 ### **6. Manejo de Errores:**
+
 ```
 TEST 1: Sesión expirada
 1. Login
@@ -411,25 +444,34 @@ TEST 3: Sin conexión
 ## 📦 Dependencias
 
 ### **UI Components:**
+
 ```typescript
-import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 ```
 
 ### **Hooks:**
+
 ```typescript
-import { useEffect, useState } from "react"
-import { useToast } from "@/hooks/use-toast"
+import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 ```
 
 ### **Icons:**
+
 ```typescript
-import { Bookmark, Loader2 } from "lucide-react"
+import { Bookmark, Loader2 } from "lucide-react";
 ```
 
 ### **Services:**
+
 ```typescript
-import { savedPostService } from "@/services/savedPostService"
+import { savedPostService } from "@/services/savedPostService";
 ```
 
 ---
@@ -437,24 +479,28 @@ import { savedPostService } from "@/services/savedPostService"
 ## 🎨 Clases de Tailwind Utilizadas
 
 ### **Botón No Guardado:**
+
 ```css
 variant="outline" → border-slate-200 text-slate-600
 hover:border-slate-300 hover:text-slate-700
 ```
 
 ### **Botón Guardado:**
+
 ```css
 text-blue-600 hover:text-blue-700
 border-blue-300 hover:border-blue-400
 ```
 
 ### **Icono Guardado:**
+
 ```css
 fill-blue-600
 animate-in zoom-in-50 duration-200
 ```
 
 ### **Spinner Loading:**
+
 ```css
 animate-spin
 h-4 w-4
@@ -480,23 +526,27 @@ h-4 w-4
 ## ✅ Checklist de Funcionalidades
 
 **Autenticación:**
+
 - ✅ Verifica token + user en localStorage
 - ✅ Toast si no está logueado
 - ✅ Tooltip diferente si no está logueado
 
 **Verificación de Estado:**
+
 - ✅ GET /saved-posts/{postId}/check al montar
 - ✅ Actualiza isSaved según respuesta
 - ✅ Loading state mientras verifica
 - ✅ Manejo silencioso de errores
 
 **Toggle Guardar:**
+
 - ✅ POST para guardar
 - ✅ DELETE para quitar
 - ✅ Actualiza estado local
 - ✅ Toast de confirmación
 
 **Estados Visuales:**
+
 - ✅ Icono outline vs filled
 - ✅ Colores diferentes (gris vs azul)
 - ✅ Animación zoom-in al guardar
@@ -504,22 +554,26 @@ h-4 w-4
 - ✅ Botón disabled durante operaciones
 
 **Tooltips:**
+
 - ✅ "Inicia sesión para guardar" si no hay sesión
 - ✅ "Guardar" si no está guardado
 - ✅ "Guardado" si está guardado
 
 **Toasts:**
+
 - ✅ Success al guardar
 - ✅ Success al quitar
 - ✅ Error si no está logueado
 - ✅ Error descriptivo en fallos
 
 **Manejo de Errores:**
+
 - ✅ 401, 403, 404, 500
 - ✅ Network errors
 - ✅ Mensajes descriptivos
 
 **Props:**
+
 - ✅ postId (requerido)
 - ✅ initialSaved (opcional)
 - ✅ variant (opcional)
@@ -534,15 +588,15 @@ h-4 w-4
 
 ```typescript
 // Guardar post
-await savedPostService.savePost(postId, token)
+await savedPostService.savePost(postId, token);
 // Returns: { message: "Post saved successfully" }
 
 // Dejar de guardar
-await savedPostService.unsavePost(postId, token)
+await savedPostService.unsavePost(postId, token);
 // Returns: { message: "Post unsaved successfully" }
 
 // Verificar si está guardado
-const isSaved = await savedPostService.checkIfSaved(postId, token)
+const isSaved = await savedPostService.checkIfSaved(postId, token);
 // Returns: boolean
 ```
 
@@ -550,11 +604,11 @@ const isSaved = await savedPostService.checkIfSaved(postId, token)
 
 ```typescript
 interface SavePostResponse {
-  message: string
+  message: string;
 }
 
 interface CheckSavedResponse {
-  saved: boolean
+  saved: boolean;
 }
 ```
 
@@ -563,18 +617,21 @@ interface CheckSavedResponse {
 ## 🎨 Variantes del Botón
 
 ### **1. Outline (Default):**
+
 ```tsx
 <SaveButton postId={1} variant="outline" />
 // Border visible, fondo transparente
 ```
 
 ### **2. Ghost:**
+
 ```tsx
 <SaveButton postId={1} variant="ghost" />
 // Sin border, hover muestra fondo
 ```
 
 ### **3. Default:**
+
 ```tsx
 <SaveButton postId={1} variant="default" />
 // Fondo sólido con gradiente
@@ -585,6 +642,7 @@ interface CheckSavedResponse {
 ## 🔗 Integración en Componentes Existentes
 
 ### **PostCardGrid.tsx:**
+
 ```tsx
 // ANTES:
 <Button onClick={handleSave} disabled={!isLoggedIn || isSaving}>
@@ -603,6 +661,7 @@ interface CheckSavedResponse {
 ```
 
 ### **PostDetail.tsx:**
+
 ```tsx
 // ANTES:
 <Button onClick={handleSave} disabled={!user || isSaving}>
@@ -625,6 +684,7 @@ interface CheckSavedResponse {
 ## 📋 Resumen
 
 El componente `SaveButton`:
+
 - ✅ **Reutilizable** en cards y páginas de detalle
 - ✅ **Verificación automática** del estado guardado
 - ✅ **Tooltips informativos** según contexto

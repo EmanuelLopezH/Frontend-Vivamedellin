@@ -20,18 +20,20 @@ Sistema completo de detalle de post con comentarios anidados (respuestas a respu
 ## 🔌 Endpoints del Backend
 
 ### **1. Obtener Post Individual**
+
 ```
-GET http://localhost:8081/api/posts/{postId}
+GET http://localhost:8080/api/posts/{postId}
 ```
 
 **Response:**
+
 ```json
 {
   "postId": 1,
   "postTitle": "Título del post",
   "content": "Contenido completo...",
   "imageName": "default.png",
-  "imageUrl": "http://localhost:8081/api/posts/images/default.png",
+  "imageUrl": "http://localhost:8080/api/posts/images/default.png",
   "creationDate": "2025-11-03 04:13:40",
   "user": {
     "id": 1,
@@ -48,11 +50,13 @@ GET http://localhost:8081/api/posts/{postId}
 ```
 
 ### **2. Obtener Comentarios con Respuestas Anidadas**
+
 ```
-GET http://localhost:8081/api/posts/{postId}/comments
+GET http://localhost:8080/api/posts/{postId}/comments
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -71,9 +75,9 @@ GET http://localhost:8081/api/posts/{postId}/comments
         "id": 2,
         "content": "Yo también asistiré",
         "createdDate": "2025-11-02T23:30:00.000+00:00",
-        "user": { 
-          "id": 2, 
-          "name": "Carlos" 
+        "user": {
+          "id": 2,
+          "name": "Carlos"
         },
         "parentCommentId": 1,
         "replies": []
@@ -84,8 +88,9 @@ GET http://localhost:8081/api/posts/{postId}/comments
 ```
 
 ### **3. Agregar Comentario o Respuesta**
+
 ```
-POST http://localhost:8081/api/posts/{postId}/comments
+POST http://localhost:8080/api/posts/{postId}/comments
 Authorization: Bearer {token}
 
 Body:
@@ -97,8 +102,9 @@ Body:
 ```
 
 ### **4. Editar Comentario**
+
 ```
-PUT http://localhost:8081/api/comments/{commentId}
+PUT http://localhost:8080/api/comments/{commentId}
 Authorization: Bearer {token}
 
 Body:
@@ -108,8 +114,9 @@ Body:
 ```
 
 ### **5. Eliminar Comentario**
+
 ```
-DELETE http://localhost:8081/api/comments/{commentId}
+DELETE http://localhost:8080/api/comments/{commentId}
 Authorization: Bearer {token}
 ```
 
@@ -175,6 +182,7 @@ Authorization: Bearer {token}
 ## 🎯 Funcionalidades Implementadas
 
 ### **Página de Detalle:**
+
 - ✅ Botón "← Volver" que regresa a `/posts`
 - ✅ Imagen grande del post (h-96)
 - ✅ Badge de categoría con colores
@@ -189,6 +197,7 @@ Authorization: Bearer {token}
 - ✅ Error state si no se encuentra el post
 
 ### **Comentarios Principales:**
+
 - ✅ Textarea para nuevo comentario (solo si está logueado)
 - ✅ Botón "Publicar comentario" con loading
 - ✅ Mensaje "Inicia sesión para comentar" si no está logueado
@@ -200,6 +209,7 @@ Authorization: Bearer {token}
 - ✅ Menú dropdown (⋮) con Editar/Eliminar (solo autor/admin)
 
 ### **Respuestas Anidadas:**
+
 - ✅ Respuestas indentadas con borde izquierdo
 - ✅ Máximo 3 niveles de anidación
 - ✅ Botón "Responder" desaparece en nivel 3
@@ -208,12 +218,14 @@ Authorization: Bearer {token}
 - ✅ Loading mientras envía respuesta
 
 ### **Edición de Comentarios:**
+
 - ✅ Click en "Editar" → muestra textarea con contenido actual
 - ✅ Botones Guardar/Cancelar
 - ✅ Actualiza comentario en backend
 - ✅ Muestra indicador "(editado)" después de editar
 
 ### **Eliminación de Comentarios:**
+
 - ✅ Confirmación antes de eliminar
 - ✅ Elimina del backend
 - ✅ Recarga comentarios después de eliminar
@@ -223,6 +235,7 @@ Authorization: Bearer {token}
 ## 🔐 Sistema de Permisos
 
 ### **Usuario NO logueado:**
+
 - ✅ Puede ver post completo
 - ✅ Puede ver todos los comentarios
 - ❌ NO puede comentar
@@ -230,6 +243,7 @@ Authorization: Bearer {token}
 - ❌ NO puede guardar post
 
 ### **Usuario logueado:**
+
 - ✅ Todo lo de NO logueado +
 - ✅ Puede comentar
 - ✅ Puede responder a comentarios
@@ -238,11 +252,13 @@ Authorization: Bearer {token}
 - ✅ Puede eliminar SUS propios comentarios
 
 ### **Autor del Post:**
+
 - ✅ Todo lo de Usuario logueado +
 - ✅ Puede editar el post
 - ✅ Puede eliminar el post
 
 ### **Admin:**
+
 - ✅ Todo +
 - ✅ Puede editar CUALQUIER comentario
 - ✅ Puede eliminar CUALQUIER comentario
@@ -254,6 +270,7 @@ Authorization: Bearer {token}
 ## 🎨 Características de UI
 
 ### **CommentItem Component:**
+
 - Avatar circular con inicial
 - Nombre en bold + timestamp relativo
 - Indicador "(editado)" si aplica
@@ -264,6 +281,7 @@ Authorization: Bearer {token}
 - Máximo 3 niveles de profundidad
 
 ### **Estados de Comentarios:**
+
 ```typescript
 Normal:   Muestra contenido + botones acción
 Editando: Muestra textarea + Guardar/Cancelar
@@ -272,6 +290,7 @@ Deleting: Opacity 0.5 mientras elimina
 ```
 
 ### **Responsive:**
+
 - Mobile: 1 columna, botones apilados
 - Desktop: Botones en fila, max-w-4xl
 
@@ -280,6 +299,7 @@ Deleting: Opacity 0.5 mientras elimina
 ## 🔄 Flujo de Datos
 
 ### **Carga Inicial:**
+
 ```
 PostDetail.tsx (useEffect)
   ↓
@@ -294,6 +314,7 @@ Renderiza post + CommentSection
 ```
 
 ### **Agregar Comentario:**
+
 ```
 CommentSection.tsx (handleSubmit)
   ↓
@@ -307,6 +328,7 @@ Recarga todo desde backend
 ```
 
 ### **Responder Comentario:**
+
 ```
 CommentItem.tsx (handleReply)
   ↓
@@ -318,6 +340,7 @@ onUpdate() → loadPostAndComments()
 ```
 
 ### **Editar Comentario:**
+
 ```
 CommentItem.tsx (handleEdit)
   ↓
@@ -333,6 +356,7 @@ onUpdate() → recarga comentarios
 ## 🧪 Cómo Probar
 
 ### **1. Ver Detalle de Post (Sin Login)**
+
 ```
 1. Ve a http://localhost:8080/posts
 2. Click en cualquier tarjeta de post
@@ -341,6 +365,7 @@ onUpdate() → recarga comentarios
 ```
 
 ### **2. Comentar (Con Login)**
+
 ```
 1. Haz login
 2. Ve a cualquier post
@@ -350,6 +375,7 @@ onUpdate() → recarga comentarios
 ```
 
 ### **3. Responder a Comentario**
+
 ```
 1. Click en "Responder" en cualquier comentario
 2. Se abre textarea debajo del comentario
@@ -359,6 +385,7 @@ onUpdate() → recarga comentarios
 ```
 
 ### **4. Editar Comentario (Solo Autor)**
+
 ```
 1. En tu propio comentario, click en ⋮
 2. Click en "Editar"
@@ -368,6 +395,7 @@ onUpdate() → recarga comentarios
 ```
 
 ### **5. Eliminar Comentario (Solo Autor/Admin)**
+
 ```
 1. En tu comentario (o cualquiera si eres admin), click ⋮
 2. Click "Eliminar" (texto rojo)
@@ -376,6 +404,7 @@ onUpdate() → recarga comentarios
 ```
 
 ### **6. Guardar Post**
+
 ```
 1. Haz login
 2. Ve a detalle de post
@@ -385,6 +414,7 @@ onUpdate() → recarga comentarios
 ```
 
 ### **7. Compartir Post**
+
 ```
 1. Click en "↗ Compartir"
 2. La URL se copia al portapapeles
@@ -392,6 +422,7 @@ onUpdate() → recarga comentarios
 ```
 
 ### **8. Editar/Eliminar Post (Admin o Autor)**
+
 ```
 1. Si eres autor o admin, verás botones adicionales
 2. Click "✏️ Editar" → va a página de edición (futuro)
@@ -403,6 +434,7 @@ onUpdate() → recarga comentarios
 ## 📦 Estructura de Código
 
 ### **postDetailService.ts**
+
 ```typescript
 interface CommentWithReplies extends PostComment {
   parentCommentId: number | null
@@ -419,6 +451,7 @@ Methods:
 ```
 
 ### **CommentItem.tsx**
+
 ```typescript
 Props:
 - comment: CommentWithReplies
@@ -438,6 +471,7 @@ Estados:
 ```
 
 ### **CommentSectionNested.tsx**
+
 ```typescript
 Props:
 - postId: number
@@ -458,6 +492,7 @@ Características:
 ## 🎨 Estilos y Animaciones
 
 ### **Indentación de Respuestas:**
+
 ```css
 depth 0: sin indentación
 depth 1: ml-8 pl-4 border-l-2 border-slate-200
@@ -466,6 +501,7 @@ depth 3: ml-8 pl-4 border-l-2 border-slate-200 (máximo)
 ```
 
 ### **Estados Visuales:**
+
 ```css
 Normal:    opacity-100
 Deleting:  opacity-50
@@ -474,6 +510,7 @@ Editando:  textarea expandido
 ```
 
 ### **Botones:**
+
 ```css
 Responder:  text-slate-600 hover:text-blue-600
 Editar:     text con icono ✏️
@@ -485,6 +522,7 @@ Eliminar:   text-red-600 con icono 🗑️
 ## 🐛 Manejo de Errores
 
 ### **Post no encontrado:**
+
 ```typescript
 if (error || !post) {
   return (
@@ -495,6 +533,7 @@ if (error || !post) {
 ```
 
 ### **Error al cargar comentarios:**
+
 ```typescript
 catch (err) {
   console.error("Error al cargar post:", err)
@@ -503,17 +542,19 @@ catch (err) {
 ```
 
 ### **Error al comentar sin login:**
+
 ```typescript
 if (!isLoggedIn) {
-  alert("Debes iniciar sesión para comentar")
-  return
+  alert("Debes iniciar sesión para comentar");
+  return;
 }
 ```
 
 ### **Error al editar/eliminar sin permisos:**
+
 ```typescript
 if (!token) {
-  throw new Error("No autenticado")
+  throw new Error("No autenticado");
 }
 ```
 
@@ -536,6 +577,7 @@ if (!token) {
 ## ✅ Checklist de Funcionalidades
 
 **Página de Detalle:**
+
 - ✅ Botón volver
 - ✅ Imagen grande del post
 - ✅ Información completa del autor
@@ -547,6 +589,7 @@ if (!token) {
 - ✅ Error state
 
 **Comentarios:**
+
 - ✅ Formulario para nuevo comentario
 - ✅ Lista de comentarios ordenados
 - ✅ Respuestas anidadas (máx 3 niveles)
@@ -559,6 +602,7 @@ if (!token) {
 - ✅ Estado vacío
 
 **Integración:**
+
 - ✅ Backend real (no mock)
 - ✅ Autenticación con JWT
 - ✅ Manejo de errores
@@ -570,6 +614,7 @@ if (!token) {
 ## 📚 Resumen
 
 El sistema de detalle de post incluye:
+
 - ✅ **Vista completa del post** con imagen grande
 - ✅ **Comentarios anidados** hasta 3 niveles
 - ✅ **Respuestas a comentarios** con UI intuitiva

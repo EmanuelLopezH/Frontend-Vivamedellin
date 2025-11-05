@@ -2,7 +2,7 @@
  * Servicio para crear nuevos posts con imágenes
  */
 
-const API_BASE_URL = "http://localhost:8081/api"
+const API_BASE_URL = "http://localhost:8080/api"
 
 export interface CreatePostData {
   postTitle: string

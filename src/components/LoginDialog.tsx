@@ -1,45 +1,57 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { LogIn, Eye, EyeOff, XCircle, AlertCircle } from "lucide-react"
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { LogIn, Eye, EyeOff, XCircle, AlertCircle } from "lucide-react";
 
 interface LoginDialogProps {
-  open: boolean
-  onClose: () => void
-  onLoginSuccess: () => void
-  onSwitchToRegister?: () => void
+  open: boolean;
+  onClose: () => void;
+  onLoginSuccess: () => void;
+  onSwitchToRegister?: () => void;
 }
 
-export function LoginDialog({ open, onClose, onLoginSuccess, onSwitchToRegister }: LoginDialogProps) {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+export function LoginDialog({
+  open,
+  onClose,
+  onLoginSuccess,
+  onSwitchToRegister,
+}: LoginDialogProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
 
     // Validación básica del email
     if (!email.includes("@") || !email.includes(".")) {
-      setError("Por favor ingresa un email válido")
-      return
+      setError("Por favor ingresa un email válido");
+      return;
     }
 
     if (password.length < 1) {
-      setError("Por favor ingresa tu contraseña")
-      return
+      setError("Por favor ingresa tu contraseña");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8081/api/users/login", {
+      const response = await fetch("http://localhost:8080/api/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,56 +60,57 @@ export function LoginDialog({ open, onClose, onLoginSuccess, onSwitchToRegister 
           email: email,
           password: password,
         }),
-      })
+      });
 
       if (response.ok) {
-        const data = await response.json()
-        console.log("✅ Login exitoso:", data)
+        const data = await response.json();
+        console.log("✅ Login exitoso:", data);
 
         // Guardar token en localStorage
-        localStorage.setItem("token", data.token)
+        localStorage.setItem("token", data.token);
 
         // Guardar usuario completo en localStorage
-        localStorage.setItem("user", JSON.stringify(data.user))
+        localStorage.setItem("user", JSON.stringify(data.user));
 
         // Mostrar en consola para debugging
-        console.log("🔑 Token guardado:", data.token)
-        console.log("👤 Usuario guardado:", data.user)
+        console.log("🔑 Token guardado:", data.token);
+        console.log("👤 Usuario guardado:", data.user);
 
         // Limpiar formulario
-        setEmail("")
-        setPassword("")
+        setEmail("");
+        setPassword("");
 
         // Cerrar modal
-        onClose()
-        onLoginSuccess()
+        onClose();
+        onLoginSuccess();
 
         // Redireccionar a la página de posts
         setTimeout(() => {
-          window.location.href = "/posts"
-        }, 100)
-
+          window.location.href = "/posts";
+        }, 100);
       } else {
         // Manejar errores del servidor
-        const errorData = await response.json().catch(() => null)
+        const errorData = await response.json().catch(() => null);
 
         if (response.status === 401) {
-          setError("Email o contraseña incorrectos")
+          setError("Email o contraseña incorrectos");
         } else if (response.status === 400) {
-          setError(errorData?.message || "Datos inválidos. Verifica los campos")
+          setError(
+            errorData?.message || "Datos inválidos. Verifica los campos"
+          );
         } else if (response.status === 500) {
-          setError("Error de conexión con el servidor")
+          setError("Error de conexión con el servidor");
         } else {
-          setError("Error al iniciar sesión. Intenta de nuevo")
+          setError("Error al iniciar sesión. Intenta de nuevo");
         }
       }
     } catch (err) {
-      console.error("Error en el login:", err)
-      setError("No se pudo conectar con el servidor. Verifica tu conexión")
+      console.error("Error en el login:", err);
+      setError("No se pudo conectar con el servidor. Verifica tu conexión");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -127,8 +140,8 @@ export function LoginDialog({ open, onClose, onLoginSuccess, onSwitchToRegister 
               placeholder="tu@email.com"
               value={email}
               onChange={(e) => {
-                setEmail(e.target.value)
-                setError(null)
+                setEmail(e.target.value);
+                setError(null);
               }}
               disabled={loading}
               className="h-11"
@@ -155,8 +168,8 @@ export function LoginDialog({ open, onClose, onLoginSuccess, onSwitchToRegister 
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => {
-                  setPassword(e.target.value)
-                  setError(null)
+                  setPassword(e.target.value);
+                  setError(null);
                 }}
                 disabled={loading}
                 className="h-11 pr-10"
@@ -191,17 +204,17 @@ export function LoginDialog({ open, onClose, onLoginSuccess, onSwitchToRegister 
 
           {/* Botones */}
           <DialogFooter className="gap-3 sm:gap-3 flex-col sm:flex-row">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={onClose}
               disabled={loading}
               className="w-full sm:w-auto order-2 sm:order-1"
             >
               Cancelar
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={loading}
               className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 order-1 sm:order-2"
             >
@@ -221,8 +234,8 @@ export function LoginDialog({ open, onClose, onLoginSuccess, onSwitchToRegister 
             <button
               type="button"
               onClick={() => {
-                onClose()
-                onSwitchToRegister?.()
+                onClose();
+                onSwitchToRegister?.();
               }}
               className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
               disabled={loading}
@@ -236,5 +249,5 @@ export function LoginDialog({ open, onClose, onLoginSuccess, onSwitchToRegister 
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

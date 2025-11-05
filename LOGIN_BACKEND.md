@@ -7,13 +7,15 @@ Se ha actualizado el componente `LoginDialog` para conectarse con el backend RES
 ## 🔗 Configuración del Backend
 
 ### Endpoint de Login
+
 ```
-URL: http://localhost:8081/api/users/login
+URL: http://localhost:8080/api/users/login
 Método: POST
 Content-Type: application/json
 ```
 
 ### Request Body
+
 ```json
 {
   "email": "string (requerido, formato email válido)",
@@ -22,6 +24,7 @@ Content-Type: application/json
 ```
 
 ### Response Exitoso (200 OK)
+
 ```json
 {
   "message": "Login successful",
@@ -38,34 +41,39 @@ Content-Type: application/json
 ```
 
 ### Errores Posibles
-| Código | Descripción | Mensaje Frontend |
-|--------|-------------|------------------|
-| 401 | Credenciales inválidas | "Email o contraseña incorrectos" |
-| 400 | Datos inválidos | Mensaje del servidor o "Datos inválidos" |
-| 500 | Error del servidor | "Error de conexión con el servidor" |
-| Network | Sin conexión | "No se pudo conectar con el servidor" |
+
+| Código  | Descripción            | Mensaje Frontend                         |
+| ------- | ---------------------- | ---------------------------------------- |
+| 401     | Credenciales inválidas | "Email o contraseña incorrectos"         |
+| 400     | Datos inválidos        | Mensaje del servidor o "Datos inválidos" |
+| 500     | Error del servidor     | "Error de conexión con el servidor"      |
+| Network | Sin conexión           | "No se pudo conectar con el servidor"    |
 
 ## 🎨 Características del Formulario
 
 ### 1. Campos del Formulario
+
 ```tsx
 ✅ Email - con validación de formato en tiempo real
 ✅ Contraseña - con botón de mostrar/ocultar
 ```
 
 ### 2. Funcionalidad de Mostrar/Ocultar Contraseña
+
 - **Icono de ojo** 👁️ para mostrar
 - **Icono de ojo tachado** 👁️‍🗨️ para ocultar
 - Toggle con un solo click
 - Estado independiente del formulario
 
 ### 3. Validación en Tiempo Real
+
 - **Email**: Muestra advertencia si no contiene @ o .
 - **Validación frontend** antes de enviar al backend
 
 ### 4. Estados de la UI
 
 #### Estado Normal
+
 ```tsx
 - Campos habilitados
 - Botón "Iniciar Sesión" habilitado
@@ -73,6 +81,7 @@ Content-Type: application/json
 ```
 
 #### Estado Cargando
+
 ```tsx
 - Campos deshabilitados
 - Botón muestra "Iniciando..." con spinner animado
@@ -81,6 +90,7 @@ Content-Type: application/json
 ```
 
 #### Estado de Error
+
 ```tsx
 - Alert rojo con icono X
 - Mensaje de error específico
@@ -90,6 +100,7 @@ Content-Type: application/json
 ## 🎯 Flujo de Usuario
 
 ### Login Exitoso
+
 ```
 1. Usuario ingresa email y contraseña
 2. Click en "Iniciar Sesión"
@@ -103,6 +114,7 @@ Content-Type: application/json
 ```
 
 ### Login Fallido (Credenciales Incorrectas)
+
 ```
 1. Usuario ingresa credenciales incorrectas
 2. Click en "Iniciar Sesión"
@@ -113,6 +125,7 @@ Content-Type: application/json
 ```
 
 ### Cambio a Registro
+
 ```
 1. Usuario click en "¿No tienes cuenta? Regístrate"
 2. Cierra modal de login
@@ -122,12 +135,14 @@ Content-Type: application/json
 ## 💾 Almacenamiento Local
 
 ### Token JWT
+
 ```javascript
-localStorage.setItem('token', data.token)
+localStorage.setItem("token", data.token);
 // Ejemplo: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIn0..."
 ```
 
 ### Datos del Usuario
+
 ```javascript
 localStorage.setItem('user', JSON.stringify(data.user))
 // Ejemplo:
@@ -142,39 +157,44 @@ localStorage.setItem('user', JSON.stringify(data.user))
 ```
 
 ### Recuperar Datos (para usar en otros componentes)
+
 ```javascript
 // Obtener token
-const token = localStorage.getItem('token')
+const token = localStorage.getItem("token");
 
 // Obtener usuario
-const userString = localStorage.getItem('user')
-const user = userString ? JSON.parse(userString) : null
+const userString = localStorage.getItem("user");
+const user = userString ? JSON.parse(userString) : null;
 
 // Verificar si está logueado
-const isLoggedIn = !!token && !!user
+const isLoggedIn = !!token && !!user;
 
 // Obtener rol del usuario
-const isAdmin = user?.roles?.includes('ROLE_ADMIN')
+const isAdmin = user?.roles?.includes("ROLE_ADMIN");
 ```
 
 ## 🔒 Seguridad
 
 ### Token JWT
+
 - Se guarda en localStorage (accesible solo desde el mismo dominio)
 - Se debe incluir en todas las peticiones autenticadas
 - Header: `Authorization: Bearer ${token}`
 
 ### Logout
+
 Para cerrar sesión, simplemente limpiar el localStorage:
+
 ```javascript
-localStorage.removeItem('token')
-localStorage.removeItem('user')
-window.location.href = '/'  // Redireccionar al home
+localStorage.removeItem("token");
+localStorage.removeItem("user");
+window.location.href = "/"; // Redireccionar al home
 ```
 
 ## 💅 Estilos con Tailwind
 
 ### Gradientes
+
 ```tsx
 // Header del modal
 bg-gradient-to-br from-blue-600 to-purple-600
@@ -185,6 +205,7 @@ hover:from-blue-700 hover:to-purple-700
 ```
 
 ### Alertas
+
 ```tsx
 // Error
 bg-red-50 border border-red-200 text-red-900
@@ -194,10 +215,11 @@ text-amber-600
 ```
 
 ### Input con Icono
+
 ```tsx
 // Input de contraseña con botón de toggle
 <div className="relative">
-  <Input className="pr-10" />  // Padding derecho para el icono
+  <Input className="pr-10" /> // Padding derecho para el icono
   <button className="absolute right-3 top-1/2 -translate-y-1/2" />
 </div>
 ```
@@ -205,12 +227,14 @@ text-amber-600
 ## 🔧 Componentes Utilizados
 
 ### De Shadcn UI
+
 - `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogFooter`, `DialogDescription`
 - `Button` (con variantes: default, outline)
 - `Input` (type: email, password, text)
 - `Label`
 
 ### Iconos de Lucide React
+
 - `LogIn` - Header del modal
 - `Eye` - Mostrar contraseña
 - `EyeOff` - Ocultar contraseña
@@ -220,29 +244,31 @@ text-amber-600
 ## 📝 Código Ejemplo de Uso
 
 ### En la página principal (Index.tsx)
+
 ```tsx
-const [loginOpen, setLoginOpen] = useState(false)
-const [registerOpen, setRegisterOpen] = useState(false)
+const [loginOpen, setLoginOpen] = useState(false);
+const [registerOpen, setRegisterOpen] = useState(false);
 
 const handleLoginSuccess = () => {
-  console.log("✅ Login exitoso")
+  console.log("✅ Login exitoso");
   // La redirección se hace automáticamente
-}
+};
 
-<LoginDialog 
+<LoginDialog
   open={loginOpen}
   onClose={() => setLoginOpen(false)}
   onLoginSuccess={handleLoginSuccess}
   onSwitchToRegister={() => {
-    setLoginOpen(false)
-    setRegisterOpen(true)
+    setLoginOpen(false);
+    setRegisterOpen(true);
   }}
-/>
+/>;
 ```
 
 ## 🧪 Testing Manual
 
 ### Test 1: Login Exitoso
+
 ```
 1. Abrir modal de login
 2. Ingresar:
@@ -255,6 +281,7 @@ const handleLoginSuccess = () => {
 ```
 
 ### Test 2: Credenciales Incorrectas
+
 ```
 1. Ingresar email/password incorrectos
 2. Click en "Iniciar Sesión"
@@ -262,6 +289,7 @@ const handleLoginSuccess = () => {
 ```
 
 ### Test 3: Validación de Email
+
 ```
 1. Escribir "usuario" (sin @)
 2. ✅ Debe mostrar advertencia: "Formato de email inválido"
@@ -269,6 +297,7 @@ const handleLoginSuccess = () => {
 ```
 
 ### Test 4: Mostrar/Ocultar Contraseña
+
 ```
 1. Escribir contraseña
 2. Click en icono de ojo
@@ -278,6 +307,7 @@ const handleLoginSuccess = () => {
 ```
 
 ### Test 5: Error de Conexión
+
 ```
 1. Apagar el backend
 2. Intentar hacer login
@@ -285,6 +315,7 @@ const handleLoginSuccess = () => {
 ```
 
 ### Test 6: Cambio a Registro
+
 ```
 1. Click en "¿No tienes cuenta? Regístrate"
 2. ✅ Debe cerrar login
@@ -294,22 +325,23 @@ const handleLoginSuccess = () => {
 ## 🔄 Integración con Otros Componentes
 
 ### Verificar si el usuario está logueado
+
 ```tsx
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
 function MyComponent() {
-  const [user, setUser] = useState(null)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const userString = localStorage.getItem('user')
-    
+    const token = localStorage.getItem("token");
+    const userString = localStorage.getItem("user");
+
     if (token && userString) {
-      setUser(JSON.parse(userString))
-      setIsLoggedIn(true)
+      setUser(JSON.parse(userString));
+      setIsLoggedIn(true);
     }
-  }, [])
+  }, []);
 
   return (
     <div>
@@ -319,37 +351,39 @@ function MyComponent() {
         <p>Por favor inicia sesión</p>
       )}
     </div>
-  )
+  );
 }
 ```
 
 ### Hacer peticiones autenticadas
-```tsx
-const token = localStorage.getItem('token')
 
-fetch('http://localhost:8081/api/protected-endpoint', {
-  method: 'GET',
+```tsx
+const token = localStorage.getItem("token");
+
+fetch("http://localhost:8080/api/protected-endpoint", {
+  method: "GET",
   headers: {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  }
-})
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  },
+});
 ```
 
 ### Componente de Logout
+
 ```tsx
 function LogoutButton() {
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    window.location.href = '/'
-  }
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/";
+  };
 
   return (
     <Button onClick={handleLogout} variant="outline">
       Cerrar Sesión
     </Button>
-  )
+  );
 }
 ```
 
@@ -366,6 +400,7 @@ function LogoutButton() {
 ## 📊 Diferencias con el Sistema Anterior
 
 ### Antes (Mock)
+
 ```tsx
 ❌ Usaba usuarios hardcodeados
 ❌ No había token JWT
@@ -374,6 +409,7 @@ function LogoutButton() {
 ```
 
 ### Ahora (Backend Real)
+
 ```tsx
 ✅ Conecta con API REST
 ✅ Token JWT para autenticación
@@ -386,6 +422,7 @@ function LogoutButton() {
 ## 📱 Responsive Design
 
 El modal es completamente responsive:
+
 - **Mobile**: Modal ocupa casi toda la pantalla
 - **Desktop**: Modal centrado con ancho máximo
 - Botones se apilan verticalmente en móvil

@@ -1,22 +1,23 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Send, AlertCircle, LogIn } from "lucide-react"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Send, AlertCircle, LogIn } from "lucide-react";
+import { getCurrentUser, type User } from "@/services/authService";
 
 interface AddCommentProps {
-  postId: number
-  parentCommentId?: number
-  onCommentAdded: (comment: any) => void
-  placeholder?: string
-  buttonText?: string
-  compact?: boolean
+  postId: number;
+  parentCommentId?: number;
+  onCommentAdded: (comment: any) => void;
+  placeholder?: string;
+  buttonText?: string;
+  compact?: boolean;
 }
 
-const API_BASE_URL = "http://localhost:8081/api"
-const MAX_CHARACTERS = 1000
+const API_BASE_URL = "http://localhost:8080/api";
+const MAX_CHARACTERS = 1000;
 
 export function AddComment({
   postId,
@@ -26,85 +27,86 @@ export function AddComment({
   buttonText = "Comentar",
   compact = false,
 }: AddCommentProps) {
-  const [content, setContent] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [user, setUser] = useState<{ id: number; name: string } | null>(null)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [content, setContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Verificar si el usuario está logueado
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    const userString = localStorage.getItem("user")
-
-    if (token && userString) {
-      try {
-        const userData = JSON.parse(userString)
-        setUser(userData)
-        setIsLoggedIn(true)
-      } catch (err) {
-        console.error("Error al parsear usuario:", err)
-        setIsLoggedIn(false)
-      }
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      setUser(currentUser);
+      setIsLoggedIn(true);
     } else {
-      setIsLoggedIn(false)
+      setIsLoggedIn(false);
     }
-  }, [])
+  }, []);
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault()
+    e?.preventDefault();
 
     // Validaciones
     if (!content.trim()) {
-      setError("El comentario no puede estar vacío")
-      return
+      setError("El comentario no puede estar vacío");
+      return;
     }
 
     if (content.length > MAX_CHARACTERS) {
-      setError(`El comentario no puede superar ${MAX_CHARACTERS} caracteres`)
-      return
+      setError(`El comentario no puede superar ${MAX_CHARACTERS} caracteres`);
+      return;
     }
 
     if (!isLoggedIn || !user) {
-      setError("Debes iniciar sesión para comentar")
-      return
+      setError("Debes iniciar sesión para comentar");
+      return;
     }
 
-    setIsSubmitting(true)
-    setError(null)
+    setIsSubmitting(true);
+    setError(null);
 
     try {
-      const token = localStorage.getItem("token")
-      
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No hay token de autenticación");
+      }
+
       // Determinar el endpoint según si es respuesta o comentario principal
       const endpoint = parentCommentId
-        ? `${API_BASE_URL}/comments/${parentCommentId}/replies`
-        : `${API_BASE_URL}/posts/${postId}/comments`
+        ? `/comments/${parentCommentId}/replies`
+        : `/posts/${postId}/comments`;
 
-      const response = await fetch(endpoint, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           content: content.trim(),
+          userId: user.id,
+          authorName: user.name,
         }),
-      })
+      });
 
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.")
+          throw new Error(
+            "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
+          );
         } else if (response.status === 403) {
-          throw new Error("No tienes permisos para comentar.")
+          throw new Error("No tienes permisos para comentar.");
         } else if (response.status === 404) {
-          throw new Error(parentCommentId ? "El comentario no existe." : "El post no existe.")
+          throw new Error(
+            parentCommentId ? "El comentario no existe." : "El post no existe."
+          );
         } else {
-          throw new Error("Error al enviar el comentario. Intenta de nuevo.")
+          throw new Error("Error al enviar el comentario. Intenta de nuevo.");
         }
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
       // Transformar la respuesta al formato esperado
       const newComment = {
@@ -118,34 +120,33 @@ export function AddComment({
         editedDate: data.editedDate,
         parentCommentId: data.parentCommentId,
         replies: data.replies || [],
-      }
+      };
 
       // Limpiar el textarea
-      setContent("")
-      setError(null)
+      setContent("");
+      setError(null);
 
       // Callback para actualizar la lista
-      onCommentAdded(newComment)
-
+      onCommentAdded(newComment);
     } catch (err: any) {
-      console.error("Error al agregar comentario:", err)
-      setError(err.message || "Error al enviar el comentario")
+      console.error("Error al agregar comentario:", err);
+      setError(err.message || "Error al enviar el comentario");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // Enviar con Ctrl+Enter o Cmd+Enter
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-      e.preventDefault()
-      handleSubmit()
+      e.preventDefault();
+      handleSubmit();
     }
-  }
+  };
 
-  const remainingChars = MAX_CHARACTERS - content.length
-  const isNearLimit = remainingChars < 100
-  const isOverLimit = remainingChars < 0
+  const remainingChars = MAX_CHARACTERS - content.length;
+  const isNearLimit = remainingChars < 100;
+  const isOverLimit = remainingChars < 0;
 
   // Si no está logueado, mostrar mensaje
   if (!isLoggedIn) {
@@ -153,10 +154,11 @@ export function AddComment({
       <Alert className="border-blue-200 bg-blue-50">
         <LogIn className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-slate-700">
-          <span className="font-semibold">Inicia sesión</span> para comentar y participar en la conversación.
+          <span className="font-semibold">Inicia sesión</span> para comentar y
+          participar en la conversación.
         </AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
@@ -166,15 +168,15 @@ export function AddComment({
         <Textarea
           value={content}
           onChange={(e) => {
-            setContent(e.target.value)
-            setError(null)
+            setContent(e.target.value);
+            setError(null);
           }}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={isSubmitting}
-          className={`resize-none ${compact ? "min-h-[80px]" : "min-h-[100px]"} ${
-            isOverLimit ? "border-red-300 focus:border-red-500" : ""
-          }`}
+          className={`resize-none ${
+            compact ? "min-h-[80px]" : "min-h-[100px]"
+          } ${isOverLimit ? "border-red-300 focus:border-red-500" : ""}`}
           maxLength={MAX_CHARACTERS + 50} // Permitir escribir un poco más para mostrar error
         />
 
@@ -203,7 +205,9 @@ export function AddComment({
       {/* Botones */}
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-500">
-          {compact ? "Presiona Ctrl+Enter para enviar" : "Presiona Ctrl+Enter para enviar rápidamente"}
+          {compact
+            ? "Presiona Ctrl+Enter para enviar"
+            : "Presiona Ctrl+Enter para enviar rápidamente"}
         </p>
 
         <Button
@@ -237,5 +241,5 @@ export function AddComment({
         </div>
       )}
     </form>
-  )
+  );
 }

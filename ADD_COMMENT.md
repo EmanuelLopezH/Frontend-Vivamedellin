@@ -9,9 +9,11 @@ Componente reutilizable para agregar comentarios y respuestas a posts con valida
 ## 🏗️ Arquitectura
 
 ### **Componente Creado:**
+
 - **`AddComment.tsx`** - Componente universal para comentarios y respuestas
 
 ### **Componentes Actualizados:**
+
 - **`CommentSectionNested.tsx`** - Usa AddComment para comentarios principales
 - **`CommentItem.tsx`** - Usa AddComment para respuestas anidadas
 
@@ -20,8 +22,9 @@ Componente reutilizable para agregar comentarios y respuestas a posts con valida
 ## 🔌 Endpoints del Backend
 
 ### **Comentario Principal:**
+
 ```
-POST http://localhost:8081/api/posts/{postId}/comments
+POST http://localhost:8080/api/posts/{postId}/comments
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -32,8 +35,9 @@ Body:
 ```
 
 ### **Respuesta a Comentario:**
+
 ```
-POST http://localhost:8081/api/comments/{commentId}/replies
+POST http://localhost:8080/api/comments/{commentId}/replies
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -44,6 +48,7 @@ Body:
 ```
 
 ### **Response (201):**
+
 ```json
 {
   "id": 1,
@@ -65,20 +70,21 @@ Body:
 
 ```typescript
 interface AddCommentProps {
-  postId: number                      // ID del post (requerido)
-  parentCommentId?: number            // ID del comentario padre (opcional, para respuestas)
-  onCommentAdded: (comment) => void   // Callback cuando se agrega comentario
-  placeholder?: string                // Placeholder del textarea (opcional)
-  buttonText?: string                 // Texto del botón (opcional)
-  compact?: boolean                   // Modo compacto para respuestas (opcional)
+  postId: number; // ID del post (requerido)
+  parentCommentId?: number; // ID del comentario padre (opcional, para respuestas)
+  onCommentAdded: (comment) => void; // Callback cuando se agrega comentario
+  placeholder?: string; // Placeholder del textarea (opcional)
+  buttonText?: string; // Texto del botón (opcional)
+  compact?: boolean; // Modo compacto para respuestas (opcional)
 }
 ```
 
 ### **Valores por Defecto:**
+
 ```typescript
-placeholder = "Escribe un comentario..."
-buttonText = "Comentar"
-compact = false
+placeholder = "Escribe un comentario...";
+buttonText = "Comentar";
+compact = false;
 ```
 
 ---
@@ -86,16 +92,19 @@ compact = false
 ## ✨ Funcionalidades Implementadas
 
 ### **1. Validación de Autenticación**
+
 - ✅ Lee token y usuario de `localStorage`
 - ✅ Si NO está logueado: muestra mensaje "Inicia sesión para comentar"
 - ✅ Bloquea el textarea si no hay sesión
 
 ### **2. Validación de Contenido**
+
 - ✅ No permite comentarios vacíos
 - ✅ Máximo 1000 caracteres
 - ✅ Trim automático (elimina espacios al inicio/final)
 
 ### **3. Contador de Caracteres**
+
 - ✅ Muestra "X / 1000" en la esquina inferior derecha
 - ✅ Cambia de color según caracteres restantes:
   - Gris: más de 100 caracteres restantes
@@ -103,20 +112,24 @@ compact = false
   - Rojo: superó el límite (deshabilita botón)
 
 ### **4. Estados del Componente**
+
 - ✅ **Loading**: Spinner animado mientras envía
 - ✅ **Error**: Muestra alert rojo con mensaje de error
 - ✅ **Success**: Limpia textarea y ejecuta callback
 - ✅ **Disabled**: Deshabilita todo mientras carga
 
 ### **5. Atajos de Teclado**
+
 - ✅ **Ctrl+Enter** (Windows/Linux) → Envía comentario
 - ✅ **Cmd+Enter** (Mac) → Envía comentario
 
 ### **6. Indicador de Usuario**
+
 - ✅ Muestra avatar + nombre del usuario actual
 - ✅ Solo en modo normal (no en modo `compact`)
 
 ### **7. Manejo de Errores**
+
 - ✅ 401: Sesión expirada
 - ✅ 403: Sin permisos
 - ✅ 404: Post/Comentario no existe
@@ -164,6 +177,7 @@ compact = false
 ## 🔄 Flujo de Datos
 
 ### **1. Montaje del Componente:**
+
 ```
 AddComment monta
   ↓
@@ -174,6 +188,7 @@ Si NO → muestra mensaje "Inicia sesión"
 ```
 
 ### **2. Usuario Escribe Comentario:**
+
 ```
 Usuario escribe en textarea
   ↓
@@ -185,6 +200,7 @@ Si > límite → texto rojo + botón disabled
 ```
 
 ### **3. Envío de Comentario:**
+
 ```
 Usuario click "Comentar" o Ctrl+Enter
   ↓
@@ -216,12 +232,13 @@ setIsSubmitting(false)
 ## 🎯 Uso del Componente
 
 ### **1. Comentario Principal:**
+
 ```tsx
 <AddComment
   postId={5}
   onCommentAdded={(comment) => {
-    console.log("Nuevo comentario:", comment)
-    reloadComments()
+    console.log("Nuevo comentario:", comment);
+    reloadComments();
   }}
   placeholder="¿Qué opinas sobre este evento?"
   buttonText="Publicar comentario"
@@ -229,13 +246,14 @@ setIsSubmitting(false)
 ```
 
 ### **2. Respuesta a Comentario:**
+
 ```tsx
 <AddComment
   postId={5}
   parentCommentId={12}
   onCommentAdded={(reply) => {
-    console.log("Nueva respuesta:", reply)
-    reloadComments()
+    console.log("Nueva respuesta:", reply);
+    reloadComments();
   }}
   placeholder="Escribe tu respuesta..."
   buttonText="Responder"
@@ -248,36 +266,39 @@ setIsSubmitting(false)
 ## 🔐 Validaciones Implementadas
 
 ### **Validación de Login:**
+
 ```typescript
-const token = localStorage.getItem("token")
-const userString = localStorage.getItem("user")
+const token = localStorage.getItem("token");
+const userString = localStorage.getItem("user");
 
 if (!token || !userString) {
-  return <Alert>"Inicia sesión para comentar"</Alert>
+  return <Alert>"Inicia sesión para comentar"</Alert>;
 }
 ```
 
 ### **Validación de Contenido:**
+
 ```typescript
 if (!content.trim()) {
-  setError("El comentario no puede estar vacío")
-  return
+  setError("El comentario no puede estar vacío");
+  return;
 }
 
 if (content.length > MAX_CHARACTERS) {
-  setError(`El comentario no puede superar ${MAX_CHARACTERS} caracteres`)
-  return
+  setError(`El comentario no puede superar ${MAX_CHARACTERS} caracteres`);
+  return;
 }
 ```
 
 ### **Validación de Respuesta del Backend:**
+
 ```typescript
 if (response.status === 401) {
-  throw new Error("Tu sesión ha expirado...")
+  throw new Error("Tu sesión ha expirado...");
 } else if (response.status === 403) {
-  throw new Error("No tienes permisos...")
+  throw new Error("No tienes permisos...");
 } else if (response.status === 404) {
-  throw new Error("El post/comentario no existe...")
+  throw new Error("El post/comentario no existe...");
 }
 ```
 
@@ -286,6 +307,7 @@ if (response.status === 401) {
 ## 🎨 Estados Visuales
 
 ### **Contador de Caracteres:**
+
 ```css
 Más de 100 restantes: text-slate-400 (gris)
 Menos de 100 restantes: text-amber-600 (amarillo)
@@ -293,6 +315,7 @@ Superó límite: text-red-600 (rojo) + border-red-300
 ```
 
 ### **Botón Comentar:**
+
 ```css
 Normal: bg-gradient-to-r from-blue-600 to-purple-600
 Hover: from-blue-700 to-purple-700
@@ -301,6 +324,7 @@ Loading: spinner animado + "Enviando..."
 ```
 
 ### **Textarea:**
+
 ```css
 Normal: border-slate-200
 Focus: border-blue-500
@@ -313,6 +337,7 @@ Disabled: opacity-50
 ## 🐛 Manejo de Errores
 
 ### **Errores HTTP:**
+
 ```typescript
 401 Unauthorized → "Tu sesión ha expirado. Inicia sesión nuevamente."
 403 Forbidden → "No tienes permisos para comentar."
@@ -322,6 +347,7 @@ Network Error → "Error de conexión. Verifica tu internet."
 ```
 
 ### **Errores de Validación:**
+
 ```typescript
 Vacío → "El comentario no puede estar vacío"
 Muy largo → "El comentario no puede superar 1000 caracteres"
@@ -333,6 +359,7 @@ No logueado → "Debes iniciar sesión para comentar"
 ## 🧪 Cómo Probar
 
 ### **1. Comentario Principal (Con Login):**
+
 ```
 1. Ve a /post/{id}
 2. Scroll hasta la sección de comentarios
@@ -343,6 +370,7 @@ No logueado → "Debes iniciar sesión para comentar"
 ```
 
 ### **2. Comentario Principal (Sin Login):**
+
 ```
 1. Logout si estás logueado
 2. Ve a /post/{id}
@@ -351,6 +379,7 @@ No logueado → "Debes iniciar sesión para comentar"
 ```
 
 ### **3. Respuesta a Comentario:**
+
 ```
 1. Login
 2. Ve a cualquier post con comentarios
@@ -362,6 +391,7 @@ No logueado → "Debes iniciar sesión para comentar"
 ```
 
 ### **4. Validación de Caracteres:**
+
 ```
 1. Escribe más de 1000 caracteres
 2. El contador se pone rojo
@@ -372,6 +402,7 @@ No logueado → "Debes iniciar sesión para comentar"
 ```
 
 ### **5. Atajos de Teclado:**
+
 ```
 1. Escribe un comentario
 2. Presiona Ctrl+Enter (o Cmd+Enter en Mac)
@@ -379,6 +410,7 @@ No logueado → "Debes iniciar sesión para comentar"
 ```
 
 ### **6. Manejo de Errores:**
+
 ```
 1. Desconecta internet
 2. Intenta enviar comentario
@@ -392,20 +424,23 @@ No logueado → "Debes iniciar sesión para comentar"
 ## 📦 Dependencias
 
 ### **UI Components:**
+
 ```typescript
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 ```
 
 ### **Icons:**
+
 ```typescript
-import { Send, AlertCircle, LogIn } from "lucide-react"
+import { Send, AlertCircle, LogIn } from "lucide-react";
 ```
 
 ### **React:**
+
 ```typescript
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 ```
 
 ---
@@ -420,7 +455,7 @@ import { useState, useEffect } from "react"
 - [ ] Auto-guardado en localStorage (drafts)
 - [ ] Límite de velocidad (rate limiting)
 - [ ] Detección de spam
-- [ ] Formato de código (```code```)
+- [ ] Formato de código (`code`)
 - [ ] GIFs y stickers
 
 ---
@@ -428,12 +463,14 @@ import { useState, useEffect } from "react"
 ## ✅ Checklist de Funcionalidades
 
 **Validaciones:**
+
 - ✅ Verifica autenticación (token + user)
 - ✅ Valida contenido vacío
 - ✅ Valida longitud máxima (1000)
 - ✅ Trim automático
 
 **UI/UX:**
+
 - ✅ Contador de caracteres dinámico
 - ✅ Cambio de colores según límite
 - ✅ Placeholder personalizable
@@ -444,6 +481,7 @@ import { useState, useEffect } from "react"
 - ✅ Alert de errores
 
 **Funcionalidades:**
+
 - ✅ Envío con Ctrl+Enter
 - ✅ Limpia textarea después de enviar
 - ✅ Callback para actualizar lista
@@ -451,11 +489,13 @@ import { useState, useEffect } from "react"
 - ✅ Headers con Authorization
 
 **Manejo de Errores:**
+
 - ✅ 401, 403, 404, 500
 - ✅ Network errors
 - ✅ Mensajes descriptivos
 
 **Estados:**
+
 - ✅ Loading state
 - ✅ Error state
 - ✅ Disabled state
@@ -466,6 +506,7 @@ import { useState, useEffect } from "react"
 ## 📚 Resumen
 
 El componente `AddComment`:
+
 - ✅ **Reutilizable** para comentarios y respuestas
 - ✅ **Validaciones completas** (auth, longitud, vacío)
 - ✅ **Contador de caracteres** con colores dinámicos
