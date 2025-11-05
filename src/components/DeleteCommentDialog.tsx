@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,29 +10,29 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { isCurrentUserAdmin } from "@/mocks/mockUsers"
+} from "@/components/ui/alert-dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { isCurrentUserAdmin } from "@/services/authService";
 
 interface DeleteCommentDialogProps {
-  open: boolean
-  onClose: () => void
-  onConfirm: (reason?: string) => void
-  commentAuthor: string
-  commentContent: string
-  isLoading?: boolean
+  open: boolean;
+  onClose: () => void;
+  onConfirm: (reason?: string) => void;
+  commentAuthor: string;
+  commentContent: string;
+  isLoading?: boolean;
 }
 
 // Motivos predefinidos para administradores
 const ADMIN_DELETION_REASONS = [
   "Lenguaje ofensivo",
-  "Contenido discriminatorio", 
+  "Contenido discriminatorio",
   "Spam",
   "Contenido inapropiado",
   "Violación de términos de uso",
-  "Otro (especificar)"
-]
+  "Otro (especificar)",
+];
 
 /**
  * Componente de diálogo para confirmar la eliminación de comentarios
@@ -45,42 +45,53 @@ export function DeleteCommentDialog({
   onConfirm,
   commentAuthor,
   commentContent,
-  isLoading = false
+  isLoading = false,
 }: DeleteCommentDialogProps) {
-  const [selectedReason, setSelectedReason] = useState<string>("")
-  const [customReason, setCustomReason] = useState<string>("")
-  const isAdmin = isCurrentUserAdmin()
+  const [selectedReason, setSelectedReason] = useState<string>("");
+  const [customReason, setCustomReason] = useState<string>("");
+  const isAdmin = isCurrentUserAdmin();
 
   const handleConfirm = () => {
     if (isAdmin) {
       // Admin debe seleccionar motivo
-      const finalReason = selectedReason === "Otro (especificar)" ? customReason : selectedReason
-      
+      const finalReason =
+        selectedReason === "Otro (especificar)" ? customReason : selectedReason;
+
       if (!finalReason.trim()) {
-        alert("Por favor seleccione o especifique un motivo para la eliminación")
-        return
+        alert(
+          "Por favor seleccione o especifique un motivo para la eliminación"
+        );
+        return;
       }
-      
-      onConfirm(finalReason.trim())
+
+      onConfirm(finalReason.trim());
     } else {
       // Usuario normal: confirmación simple
-      onConfirm()
+      onConfirm();
     }
-    
+
     // Limpiar estado al confirmar
-    setSelectedReason("")
-    setCustomReason("")
-  }
+    setSelectedReason("");
+    setCustomReason("");
+  };
 
   const handleClose = () => {
     // Limpiar estado al cerrar
-    setSelectedReason("")
-    setCustomReason("")
-    onClose()
-  }
+    setSelectedReason("");
+    setCustomReason("");
+    onClose();
+  };
 
   return (
-    <AlertDialog open={open} onOpenChange={handleClose}>
+    // Only call the external onClose when the dialog is closed (isOpen === false).
+    // Previous code forwarded handleClose directly which caused the dialog to
+    // immediately close when it was opened (onOpenChange fires with true).
+    <AlertDialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) handleClose();
+      }}
+    >
       <AlertDialogContent className="max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle>
@@ -97,7 +108,8 @@ export function DeleteCommentDialog({
               "{commentContent}"
             </div>
             <div className="text-red-600 font-medium">
-              Esta acción no se puede deshacer. El comentario desaparecerá para todos los usuarios.
+              Esta acción no se puede deshacer. El comentario desaparecerá para
+              todos los usuarios.
               {isAdmin && " La acción quedará registrada para auditoría."}
             </div>
           </AlertDialogDescription>
@@ -147,8 +159,8 @@ export function DeleteCommentDialog({
           <AlertDialogCancel onClick={handleClose} disabled={isLoading}>
             Cancelar
           </AlertDialogCancel>
-          <AlertDialogAction 
-            onClick={handleConfirm} 
+          <AlertDialogAction
+            onClick={handleConfirm}
             disabled={isLoading || (isAdmin && !selectedReason)}
             className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
           >
@@ -157,5 +169,5 @@ export function DeleteCommentDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
