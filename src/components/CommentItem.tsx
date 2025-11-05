@@ -1,93 +1,94 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { MessageCircle, Edit, Trash2, MoreVertical } from "lucide-react"
-import { AddComment } from "@/components/AddComment"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { MessageCircle, Edit, Trash2, MoreVertical } from "lucide-react";
+import { AddComment } from "@/components/AddComment";
+import { DeleteCommentDialog } from "@/components/DeleteCommentDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { postDetailService, type CommentWithReplies } from "@/services/postDetailService"
+} from "@/components/ui/dropdown-menu";
+import {
+  postDetailService,
+  type CommentWithReplies,
+} from "@/services/postDetailService";
 
 interface CommentItemProps {
-  comment: CommentWithReplies
-  postId: number
-  currentUserId?: number
-  isAdmin?: boolean
-  onUpdate: () => void
-  depth?: number
+  comment: CommentWithReplies;
+  postId: number;
+  currentUserId?: number;
+  isAdmin?: boolean;
+  onUpdate: () => void;
+  depth?: number;
 }
 
-export function CommentItem({ 
-  comment, 
-  postId, 
-  currentUserId, 
-  isAdmin, 
+export function CommentItem({
+  comment,
+  postId,
+  currentUserId,
+  isAdmin,
   onUpdate,
-  depth = 0 
+  depth = 0,
 }: CommentItemProps) {
-  const [showReplyForm, setShowReplyForm] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editText, setEditText] = useState(comment.content)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(comment.content);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const formatTimeAgo = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffInMs = now.getTime() - date.getTime()
-    const diffInMinutes = Math.floor(diffInMs / 60000)
-    const diffInHours = Math.floor(diffInMs / 3600000)
-    const diffInDays = Math.floor(diffInMs / 86400000)
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diffInMs / 60000);
+    const diffInHours = Math.floor(diffInMs / 3600000);
+    const diffInDays = Math.floor(diffInMs / 86400000);
 
-    if (diffInMinutes < 1) return "ahora"
-    if (diffInMinutes < 60) return `hace ${diffInMinutes}m`
-    if (diffInHours < 24) return `hace ${diffInHours}h`
-    if (diffInDays < 7) return `hace ${diffInDays}d`
-    return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })
-  }
+    if (diffInMinutes < 1) return "ahora";
+    if (diffInMinutes < 60) return `hace ${diffInMinutes}m`;
+    if (diffInHours < 24) return `hace ${diffInHours}h`;
+    if (diffInDays < 7) return `hace ${diffInDays}d`;
+    return date.toLocaleDateString("es-ES", { month: "short", day: "numeric" });
+  };
 
   const handleReplyAdded = (newReply: any) => {
     // Callback cuando se agrega una respuesta
-    setShowReplyForm(false)
-    onUpdate()
-  }
+    setShowReplyForm(false);
+    onUpdate();
+  };
 
   const handleEdit = async () => {
-    if (!editText.trim()) return
+    if (!editText.trim()) return;
 
     try {
-      await postDetailService.editComment(comment.id, editText)
-      setIsEditing(false)
-      onUpdate()
+      await postDetailService.editComment(comment.id, editText);
+      setIsEditing(false);
+      onUpdate();
     } catch (error) {
-      console.error("Error al editar:", error)
-      alert("Error al editar comentario")
+      console.error("Error al editar:", error);
+      alert("Error al editar comentario");
     }
-  }
+  };
 
-  const handleDelete = async () => {
-    if (!window.confirm("¿Estás seguro de eliminar este comentario?")) {
-      return
-    }
-
-    setIsDeleting(true)
+  const handleDelete = async (reason?: string) => {
+    setIsDeleting(true);
     try {
-      await postDetailService.deleteComment(comment.id)
-      onUpdate()
+      await postDetailService.deleteComment(comment.id);
+      onUpdate();
     } catch (error) {
-      console.error("Error al eliminar:", error)
-      alert("Error al eliminar comentario")
+      console.error("Error al eliminar:", error);
     } finally {
-      setIsDeleting(false)
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
     }
-  }
+  };
 
-  const canEditOrDelete = isAdmin || currentUserId === comment.userId
-  const maxDepth = 3 // Máximo nivel de anidación
+  const canEditOrDelete = isAdmin || currentUserId === comment.userId;
+  const maxDepth = 3; // Máximo nivel de anidación
 
   // Debug: Verificar permisos
   console.log("🔍 [CommentItem]", {
@@ -95,12 +96,14 @@ export function CommentItem({
     isAdmin,
     currentUserId,
     commentUserId: comment.userId,
-    canEditOrDelete
-  })
+    canEditOrDelete,
+  });
 
   return (
-    <div 
-      className={`${depth > 0 ? 'ml-8 pl-4 border-l-2 border-slate-200' : ''} mb-4`}
+    <div
+      className={`${
+        depth > 0 ? "ml-8 pl-4 border-l-2 border-slate-200" : ""
+      } mb-4`}
       style={{ opacity: isDeleting ? 0.5 : 1 }}
     >
       <div className="flex gap-3">
@@ -144,8 +147,8 @@ export function CommentItem({
                   size="sm"
                   variant="ghost"
                   onClick={() => {
-                    setIsEditing(false)
-                    setEditText(comment.content)
+                    setIsEditing(false);
+                    setEditText(comment.content);
                   }}
                 >
                   Cancelar
@@ -189,8 +192,8 @@ export function CommentItem({
                       <Edit className="h-4 w-4 mr-2" />
                       Editar
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={handleDelete}
+                    <DropdownMenuItem
+                      onClick={() => setShowDeleteDialog(true)}
                       className="text-red-600 focus:text-red-700"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
@@ -202,6 +205,14 @@ export function CommentItem({
             </div>
           )}
 
+          <DeleteCommentDialog
+            open={showDeleteDialog}
+            onClose={() => setShowDeleteDialog(false)}
+            onConfirm={handleDelete}
+            commentAuthor={comment.userName}
+            commentContent={comment.content}
+            isLoading={isDeleting}
+          />
           {/* Formulario de respuesta */}
           {showReplyForm && (
             <div className="mt-3 mb-3">
@@ -243,5 +254,5 @@ export function CommentItem({
         </div>
       </div>
     </div>
-  )
+  );
 }

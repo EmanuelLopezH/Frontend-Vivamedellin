@@ -51,16 +51,19 @@ export function LoginDialog({
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
+      const response = await fetch(
+        "https://vivemedellin-backend.onrender.com/api/users/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();

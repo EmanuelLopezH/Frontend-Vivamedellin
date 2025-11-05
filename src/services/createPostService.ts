@@ -2,7 +2,7 @@
  * Servicio para crear nuevos posts con imágenes
  */
 
-const API_BASE_URL = "http://localhost:8080/api"
+const API_BASE_URL = "https://vivemedellin-backend.onrender.com/api"
 
 export interface CreatePostData {
   postTitle: string

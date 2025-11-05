@@ -1,6 +1,6 @@
 import type { Post, PostComment } from "@/types/post"
 
-const API_BASE_URL = "http://localhost:8080/api"
+const API_BASE_URL = "https://vivemedellin-backend.onrender.com/api"
 
 export interface CommentWithReplies extends PostComment {
   parentCommentId: number | null

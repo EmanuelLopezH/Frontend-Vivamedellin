@@ -103,18 +103,21 @@ export function RegisterDialog({
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          about: formData.about || undefined,
-        }),
-      });
+      const response = await fetch(
+        "https://vivemedellin-backend.onrender.com/api/users/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            about: formData.about || undefined,
+          }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();

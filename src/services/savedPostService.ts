@@ -2,7 +2,7 @@
  * Servicio para manejar operaciones de posts guardados
  */
 
-const API_BASE_URL = "http://localhost:8080/api"
+const API_BASE_URL = "https://vivemedellin-backend.onrender.com/api"
 
 export interface SavePostResponse {
   message: string

@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { LoginDialog } from '@/components/LoginDialog';
-import { RegisterDialog } from '@/components/RegisterDialog';
-import { 
-  MapPin, 
-  Calendar, 
-  Music, 
-  Users, 
-  Sparkles, 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { LoginDialog } from "@/components/LoginDialog";
+import { RegisterDialog } from "@/components/RegisterDialog";
+import {
+  MapPin,
+  Calendar,
+  Music,
+  Users,
+  Sparkles,
   Heart,
   ArrowRight,
   Globe,
-  Star
-} from 'lucide-react';
+  Star,
+} from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -41,29 +41,30 @@ const Index = () => {
             <Sparkles className="w-4 h-4" />
             Descubre Medellín como nunca antes
           </div>
-          
+
           <h1 className="text-5xl md:text-7xl font-bold leading-tight">
             Tu guía inteligente para
             <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
               vivir Medellín
             </span>
           </h1>
-          
+
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Explora eventos, descubre lugares increíbles y conecta con la vibrante cultura de la ciudad de la eterna primavera
+            Explora eventos, descubre lugares increíbles y conecta con la
+            vibrante cultura de la ciudad de la eterna primavera
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               onClick={() => setRegisterOpen(true)}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8"
             >
               Comenzar ahora
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               className="text-lg px-8 hover:bg-white"
             >
@@ -95,20 +96,24 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4">Eventos Destacados</h2>
-            <p className="text-xl text-slate-600">Los conciertos más esperados en Medellín</p>
+            <p className="text-xl text-slate-600">
+              Los conciertos más esperados en Medellín
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Evento 1: Bad Bunny */}
-            <div 
-              onClick={() => window.location.href = '/event-01'}
+            <div
+              onClick={() => (window.location.href = "/event-01")}
               className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
             >
               <div className="h-64 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
                 <div className="text-center text-white p-6">
                   <Music className="w-16 h-16 mx-auto mb-4" />
                   <h3 className="text-3xl font-bold">Bad Bunny</h3>
-                  <p className="text-lg mt-2 opacity-90">Conejo Malo Tour 2026</p>
+                  <p className="text-lg mt-2 opacity-90">
+                    Conejo Malo Tour 2026
+                  </p>
                 </div>
               </div>
               <div className="p-6">
@@ -121,7 +126,8 @@ const Index = () => {
                   <span className="text-sm">Estadio Atanasio Girardot</span>
                 </div>
                 <p className="text-slate-600 text-sm mb-4">
-                  Experimenta el show más esperado del año con Bad Bunny en vivo. Un x100to, PERRO NEGRO, ADIVINO y más hits.
+                  Experimenta el show más esperado del año con Bad Bunny en
+                  vivo. Un x100to, PERRO NEGRO, ADIVINO y más hits.
                 </p>
                 <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                   Ver Detalles
@@ -131,8 +137,8 @@ const Index = () => {
             </div>
 
             {/* Evento 2: Guns N' Roses */}
-            <div 
-              onClick={() => window.location.href = '/event-02'}
+            <div
+              onClick={() => (window.location.href = "/event-02")}
               className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
             >
               <div className="h-64 bg-gradient-to-br from-red-500 to-black flex items-center justify-center">
@@ -152,7 +158,8 @@ const Index = () => {
                   <span className="text-sm">Estadio Atanasio Girardot</span>
                 </div>
                 <p className="text-slate-600 text-sm mb-4">
-                  La leyenda del rock regresa a Medellín. Sweet Child O' Mine, Welcome To The Jungle y todos los clásicos.
+                  La leyenda del rock regresa a Medellín. Sweet Child O' Mine,
+                  Welcome To The Jungle y todos los clásicos.
                 </p>
                 <Button className="w-full bg-gradient-to-r from-red-600 to-black hover:from-red-700 hover:to-gray-900">
                   Ver Detalles
@@ -164,7 +171,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section
       <section className="bg-white py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -234,7 +241,7 @@ const Index = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
@@ -244,10 +251,11 @@ const Index = () => {
             Comienza tu aventura hoy
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Únete a miles de paisas y visitantes que ya están descubriendo lo mejor de Medellín
+            Únete a miles de paisas y visitantes que ya están descubriendo lo
+            mejor de Medellín
           </p>
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             onClick={() => setRegisterOpen(true)}
             className="bg-white text-blue-600 hover:bg-slate-100 text-lg px-8"
           >
@@ -275,23 +283,23 @@ const Index = () => {
       </footer>
 
       {/* Modales */}
-      <LoginDialog 
+      <LoginDialog
         open={loginOpen}
         onClose={() => setLoginOpen(false)}
         onLoginSuccess={handleLoginSuccess}
         onSwitchToRegister={() => {
-          setLoginOpen(false)
-          setRegisterOpen(true)
+          setLoginOpen(false);
+          setRegisterOpen(true);
         }}
       />
 
-      <RegisterDialog 
+      <RegisterDialog
         open={registerOpen}
         onClose={() => setRegisterOpen(false)}
         onRegisterSuccess={handleRegisterSuccess}
         onSwitchToLogin={() => {
-          setRegisterOpen(false)
-          setLoginOpen(true)
+          setRegisterOpen(false);
+          setLoginOpen(true);
         }}
       />
     </div>

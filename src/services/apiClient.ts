@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8080'
+const API_BASE = 'https://vivemedellin-backend.onrender.com'
 
 export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
   const url = API_BASE + (path.startsWith('/') ? path : '/' + path)
