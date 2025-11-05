@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { isCurrentUserAdmin } from "@/mocks/mockUsers"
+import { isCurrentUserAdmin } from "@/services/authService"
 
 interface DeleteCommentDialogProps {
   open: boolean

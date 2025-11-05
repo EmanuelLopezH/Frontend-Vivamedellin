@@ -8,6 +8,7 @@ import { CommentSection } from "@/components/CommentSectionNested"
 import { postDetailService, type CommentWithReplies } from "@/services/postDetailService"
 import { postServiceBackend } from "@/services/postServiceBackend"
 import type { Post } from "@/types/post"
+import { debugCurrentUser } from "@/utils/debugAuth"
 import { 
   ArrowLeft, 
   Share2, 
@@ -38,7 +39,7 @@ export default function PostDetail() {
   const [comments, setComments] = useState<CommentWithReplies[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [user, setUser] = useState<{ id: number; name: string; role?: string } | null>(null)
+  const [user, setUser] = useState<{ id: number; name: string; role?: string; roles?: string[] } | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
@@ -49,6 +50,9 @@ export default function PostDetail() {
       try {
         const userData = JSON.parse(userString)
         setUser(userData)
+        
+        // Debug: Mostrar información del usuario
+        debugCurrentUser()
       } catch (error) {
         console.error("Error al parsear usuario:", error)
       }
@@ -121,8 +125,14 @@ export default function PostDetail() {
     }
   }
 
-  const isAdmin = user?.role === "ADMIN"
+  const isAdmin = user?.roles?.includes("ROLE_ADMIN") || user?.role === "ROLE_ADMIN"
   const canEditOrDelete = isAdmin || (user && post && user.id === post.userId)
+
+  // Debug: Verificar si el usuario es admin
+  console.log("🔍 [PostDetail] Usuario actual:", user)
+  console.log("🔍 [PostDetail] user?.roles:", user?.roles)
+  console.log("🔍 [PostDetail] user?.role:", user?.role)
+  console.log("🔍 [PostDetail] isAdmin:", isAdmin)
 
   // Loading state
   if (loading) {

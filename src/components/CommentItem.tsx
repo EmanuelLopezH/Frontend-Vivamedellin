@@ -89,6 +89,15 @@ export function CommentItem({
   const canEditOrDelete = isAdmin || currentUserId === comment.userId
   const maxDepth = 3 // Máximo nivel de anidación
 
+  // Debug: Verificar permisos
+  console.log("🔍 [CommentItem]", {
+    commentId: comment.id,
+    isAdmin,
+    currentUserId,
+    commentUserId: comment.userId,
+    canEditOrDelete
+  })
+
   return (
     <div 
       className={`${depth > 0 ? 'ml-8 pl-4 border-l-2 border-slate-200' : ''} mb-4`}
