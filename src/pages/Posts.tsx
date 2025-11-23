@@ -62,15 +62,15 @@ export default function Posts() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600" />
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <div className="w-8 h-8 rounded-full bg-primary" />
+              <span className="text-xl font-bold text-primary">
                 ViveMedellín
               </span>
             </div>
@@ -89,7 +89,7 @@ export default function Posts() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-slate-600 hover:text-purple-600"
+                className="text-slate-600 hover:text-primary"
               >
                 <Calendar className="h-4 w-4 mr-2" />
                 Eventos
@@ -98,7 +98,7 @@ export default function Posts() {
               {/* User menu */}
               <div className="flex items-center gap-3 ml-2 pl-2 border-l border-slate-200">
                 <div className="hidden sm:flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold">
                     {user.name[0].toUpperCase()}
                   </div>
                   <span className="text-sm font-medium text-slate-700">{user.name}</span>
@@ -142,7 +142,7 @@ export default function Posts() {
           </div>
         ) : posts.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow-md">
-            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-200 flex items-center justify-center">
               <Calendar className="h-10 w-10 text-blue-600" />
             </div>
             <h3 className="text-xl font-semibold text-slate-900 mb-2">
@@ -153,7 +153,6 @@ export default function Posts() {
             </p>
             <Button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
               Crear el primer post
             </Button>

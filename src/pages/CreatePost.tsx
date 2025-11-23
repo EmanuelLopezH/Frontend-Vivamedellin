@@ -250,7 +250,7 @@ export default function CreatePost() {
               Volver
             </Button>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-primary">
                 Crear Nuevo Post
               </h1>
             </div>
@@ -427,7 +427,7 @@ export default function CreatePost() {
               <Button
                 type="submit"
                 disabled={isSubmitting || !!titleError || !!contentError || !!imageError}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 gap-2"
+                className="gap-2"
               >
                 {isSubmitting ? (
                   <>

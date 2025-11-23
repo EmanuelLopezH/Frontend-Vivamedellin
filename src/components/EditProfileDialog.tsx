@@ -164,7 +164,7 @@ export function EditProfileDialog({ open, onClose, user, onSuccess }: EditProfil
                     className="h-24 w-24 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="h-24 w-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
+                  <div className="h-24 w-24 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold">
                     {getInitials(name)}
                   </div>
                 )}

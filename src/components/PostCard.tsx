@@ -79,7 +79,7 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
     <Card className="p-6 mb-4 bg-white shadow-md hover:shadow-lg transition-shadow">
       {/* Header del post */}
       <div className="flex items-start gap-3 mb-4">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold flex-shrink-0">
+        <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-semibold flex-shrink-0">
           {post.userName[0].toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
@@ -159,7 +159,7 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
               onClick={handleComment}
               disabled={!commentText.trim() || isCommenting}
               size="sm"
-              className="self-end bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="self-end"
             >
               {isCommenting ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

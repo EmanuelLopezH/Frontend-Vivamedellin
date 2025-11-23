@@ -104,7 +104,7 @@ export function PostCardGrid({ post, onUpdate, isLoggedIn, isAdmin, currentUserI
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
             <div className="text-6xl">🎉</div>
           </div>
         )}
@@ -121,7 +121,7 @@ export function PostCardGrid({ post, onUpdate, isLoggedIn, isAdmin, currentUserI
       <div className="p-5">
         {/* Header: Autor y tiempo */}
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
             {post.userName[0].toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">

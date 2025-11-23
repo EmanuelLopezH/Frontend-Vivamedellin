@@ -55,7 +55,7 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
     <Card className="p-4 mb-6 bg-white shadow-md">
       <div className="flex gap-3">
         {/* Avatar */}
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold flex-shrink-0">
+        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold flex-shrink-0">
           {user?.name?.[0]?.toUpperCase() || "?"}
         </div>
 
@@ -109,7 +109,7 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
                   <Button
                     onClick={handleSubmit}
                     disabled={!content.trim() || loading}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    className=""
                   >
                     {loading ? (
                       <>

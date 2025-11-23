@@ -214,7 +214,7 @@ export default function PostDetail() {
               )}
             </div>
           ) : (
-            <div className="relative w-full h-96 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex items-center justify-center">
+            <div className="relative w-full h-96 bg-gray-200 flex items-center justify-center">
               <div className="text-8xl">🎉</div>
               {post.category && (
                 <Badge className={`absolute top-4 left-4 font-medium ${getCategoryColor(post.category.title)}`}>
@@ -228,7 +228,7 @@ export default function PostDetail() {
           <div className="p-8">
             {/* Header: Autor y fecha */}
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-200">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-lg font-semibold">
+              <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white text-lg font-semibold">
                 {post.userName[0].toUpperCase()}
               </div>
               <div className="flex-1">

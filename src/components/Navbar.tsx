@@ -145,7 +145,7 @@ export function Navbar() {
               variant="ghost"
               size="sm"
               onClick={() => navigate("/posts")}
-              className="text-slate-600 hover:text-purple-600"
+              className="text-slate-600 hover:text-primary"
             >
               <Calendar className="h-4 w-4 mr-2" />
               Comunidad
@@ -181,7 +181,6 @@ export function Navbar() {
                 </Button>
                 <Button
                   onClick={() => setRegisterOpen(true)}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                 >
                   Registrarse
                 </Button>
@@ -191,7 +190,7 @@ export function Navbar() {
                 {/* Botón Crear Evento */}
                 <Button
                   onClick={() => navigate("/create-post")}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 gap-2"
+                  className="gap-2"
                 >
                   <Plus className="h-4 w-4" />
                   <span className="hidden lg:inline">Crear evento</span>
@@ -214,7 +213,7 @@ export function Navbar() {
                           className="h-8 w-8 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">
+                        <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold">
                           {getInitials(user.name)}
                         </div>
                       )}
@@ -287,7 +286,7 @@ export function Navbar() {
                 <SheetHeader>
                   <SheetTitle className="flex items-center gap-2">
                     <img src="/logo-icon.svg" alt="ViveMedellín" className="h-8 w-8" />
-                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <span className="text-primary font-semibold">
                       ViveMedellín
                     </span>
                   </SheetTitle>
@@ -321,7 +320,7 @@ export function Navbar() {
                         Iniciar sesión
                       </Button>
                       <Button
-                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600"
+                        className="w-full"
                         onClick={() => {
                           setIsMobileMenuOpen(false)
                           setRegisterOpen(true)
@@ -341,7 +340,7 @@ export function Navbar() {
                             className="h-12 w-12 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">
+                          <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
                             {getInitials(user.name)}
                           </div>
                         )}
@@ -358,7 +357,7 @@ export function Navbar() {
 
                       {/* Botón Crear Evento */}
                       <Button
-                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600"
+                        className="w-full"
                         onClick={() => navigate("/create-post")}
                       >
                         <Plus className="h-4 w-4 mr-2" />

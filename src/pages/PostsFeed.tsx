@@ -133,7 +133,7 @@ export default function PostsFeed() {
           <PostGridSkeleton count={9} />
         ) : posts.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-lg shadow-md">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-200 flex items-center justify-center">
               <Calendar className="h-12 w-12 text-blue-600" />
             </div>
             <h3 className="text-2xl font-semibold text-slate-900 mb-3">
@@ -145,7 +145,6 @@ export default function PostsFeed() {
             {user && (
               <Button
                 onClick={() => navigate("/create-post")}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Crear el primer post

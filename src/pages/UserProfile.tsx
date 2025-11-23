@@ -163,7 +163,7 @@ export default function UserProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header del perfil */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -177,7 +177,7 @@ export default function UserProfile() {
                   className="h-32 w-32 rounded-full object-cover border-4 border-white shadow-lg"
                 />
               ) : (
-                <div className="h-32 w-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-4xl font-bold border-4 border-white shadow-lg">
+                <div className="h-32 w-32 rounded-full bg-primary flex items-center justify-center text-white text-4xl font-bold border-4 border-white shadow-lg">
                   {getInitials(user.name)}
                 </div>
               )}

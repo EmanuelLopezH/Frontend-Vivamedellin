@@ -33,18 +33,18 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 md:py-32">
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full text-blue-700 text-sm font-medium">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium">
             <Sparkles className="w-4 h-4" />
             Descubre Medellín como nunca antes
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold leading-tight">
             Tu guía inteligente para
-            <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="block text-primary font-bold">
               vivir Medellín
             </span>
           </h1>
@@ -58,7 +58,7 @@ const Index = () => {
             <Button
               size="lg"
               onClick={() => setRegisterOpen(true)}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8"
+              className="text-lg px-8"
             >
               Comenzar ahora
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -129,7 +129,7 @@ const Index = () => {
                   Experimenta el show más esperado del año con Bad Bunny en
                   vivo. Un x100to, PERRO NEGRO, ADIVINO y más hits.
                 </p>
-                <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Button className="w-full">
                   Ver Detalles
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -161,7 +161,7 @@ const Index = () => {
                   La leyenda del rock regresa a Medellín. Sweet Child O' Mine,
                   Welcome To The Jungle y todos los clásicos.
                 </p>
-                <Button className="w-full bg-gradient-to-r from-red-600 to-black hover:from-red-700 hover:to-gray-900">
+                <Button className="w-full bg-gray-800 hover:bg-gray-700 text-white">
                   Ver Detalles
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -190,8 +190,8 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100/50 hover:shadow-lg transition-shadow">
-              <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-4">
+            <div className="p-8 rounded-2xl bg-white border border-gray-200 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-4">
                 <MapPin className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-bold mb-2">Explora Lugares</h3>
@@ -244,7 +244,7 @@ const Index = () => {
       </section> */}
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="py-20 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
           <Globe className="w-16 h-16 mx-auto mb-6 opacity-90" />
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -270,7 +270,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <MapPin className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">ViveMedellín</span>
