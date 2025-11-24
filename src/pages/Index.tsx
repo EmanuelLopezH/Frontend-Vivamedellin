@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LoginDialog } from "@/components/LoginDialog";
 import { RegisterDialog } from "@/components/RegisterDialog";
+import { getCurrentUser } from "@/services/authService";
 import {
   MapPin,
   Calendar,
@@ -21,6 +22,13 @@ const Index = () => {
   const navigate = useNavigate();
   const [loginOpen, setLoginOpen] = useState(false);
   const [registerOpen, setRegisterOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Verificar si el usuario está logueado
+  useEffect(() => {
+    const user = getCurrentUser();
+    setIsLoggedIn(!!user);
+  }, []);
 
   const handleLoginSuccess = () => {
     console.log("✅ Login exitoso");
@@ -54,24 +62,42 @@ const Index = () => {
             vibrante cultura de la ciudad de la eterna primavera
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button
-              size="lg"
-              onClick={() => setRegisterOpen(true)}
-              className="text-lg px-8"
-            >
-              Comenzar ahora
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 hover:bg-white"
-            >
-              Ver eventos
-              <Calendar className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
+          {/* Botones solo si no está logueado */}
+          {!isLoggedIn && (
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Button
+                size="lg"
+                onClick={() => setRegisterOpen(true)}
+                className="text-lg px-8"
+              >
+                Comenzar ahora
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-lg px-8 hover:bg-white"
+                onClick={() => navigate("/posts")}
+              >
+                Ver eventos
+                <Calendar className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          )}
+
+          {/* Si está logueado, mostrar mensaje de bienvenida */}
+          {isLoggedIn && (
+            <div className="pt-4">
+              <Button
+                size="lg"
+                onClick={() => navigate("/posts")}
+                className="text-lg px-8"
+              >
+                Explorar comunidad
+                <Calendar className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          )}
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-8 pt-12 max-w-2xl mx-auto">
@@ -243,27 +269,29 @@ const Index = () => {
         </div>
       </section> */}
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
-          <Globe className="w-16 h-16 mx-auto mb-6 opacity-90" />
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Comienza tu aventura hoy
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Únete a miles de paisas y visitantes que ya están descubriendo lo
-            mejor de Medellín
-          </p>
-          <Button
-            size="lg"
-            onClick={() => setRegisterOpen(true)}
-            className="bg-white text-blue-600 hover:bg-slate-100 text-lg px-8"
-          >
-            Crear cuenta gratis
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        </div>
-      </section>
+      {/* CTA Section - Solo mostrar si no está logueado */}
+      {!isLoggedIn && (
+        <section className="py-20 bg-primary text-primary-foreground">
+          <div className="container mx-auto px-4 text-center">
+            <Globe className="w-16 h-16 mx-auto mb-6 opacity-90" />
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Comienza tu aventura hoy
+            </h2>
+            <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+              Únete a miles de paisas y visitantes que ya están descubriendo lo
+              mejor de Medellín
+            </p>
+            <Button
+              size="lg"
+              onClick={() => setRegisterOpen(true)}
+              className="bg-white text-blue-600 hover:bg-slate-100 text-lg px-8"
+            >
+              Crear cuenta gratis
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-300 py-12">

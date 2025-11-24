@@ -2,6 +2,8 @@
  * Servicio para manejar operaciones de posts guardados
  */
 
+import type { Post } from "@/types/post"
+
 const API_BASE_URL = "https://vivemedellin-backend.onrender.com/api"
 
 export interface SavePostResponse {
@@ -108,8 +110,37 @@ export const checkIfSaved = async (postId: number, token: string): Promise<boole
   }
 }
 
+/**
+ * Obtener todos los posts guardados por el usuario
+ * @param token - Token JWT de autenticación
+ */
+export const getSavedPosts = async (token: string): Promise<Post[]> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/saved-posts`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (response.status === 401) {
+      throw new Error("Tu sesión ha expirado. Inicia sesión nuevamente.")
+    } else if (!response.ok) {
+      throw new Error("Error al cargar posts guardados.")
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("Error en getSavedPosts:", error)
+    throw error
+  }
+}
+
 export const savedPostService = {
   savePost,
   unsavePost,
   checkIfSaved,
+  getSavedPosts,
 }

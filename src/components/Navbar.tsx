@@ -187,14 +187,16 @@ export function Navbar() {
               </>
             ) : (
               <>
-                {/* Botón Crear Evento */}
-                <Button
-                  onClick={() => navigate("/create-post")}
-                  className="gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span className="hidden lg:inline">Crear evento</span>
-                </Button>
+                {/* Botón Crear Evento - Solo Admin */}
+                {isAdmin && (
+                  <Button
+                    onClick={() => navigate("/create-post")}
+                    className="gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span className="hidden lg:inline">Crear evento</span>
+                  </Button>
+                )}
 
                 {/* Notificaciones */}
                 <NotificationsDropdown />
@@ -241,10 +243,12 @@ export function Navbar() {
                       <User className="mr-2 h-4 w-4" />
                       Mi perfil
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/my-posts")}>
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Mis eventos
-                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <DropdownMenuItem onClick={() => navigate("/my-posts")}>
+                        <Calendar className="mr-2 h-4 w-4" />
+                        Mis eventos
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={() => navigate("/saved-posts")}>
                       <BookMarked className="mr-2 h-4 w-4" />
                       Eventos guardados
@@ -355,14 +359,16 @@ export function Navbar() {
                         </div>
                       </div>
 
-                      {/* Botón Crear Evento */}
-                      <Button
-                        className="w-full"
-                        onClick={() => navigate("/create-post")}
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Crear evento
-                      </Button>
+                      {/* Botón Crear Evento - Solo Admin */}
+                      {isAdmin && (
+                        <Button
+                          className="w-full"
+                          onClick={() => navigate("/create-post")}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Crear evento
+                        </Button>
+                      )}
 
                       {/* Menu Items */}
                       <div className="space-y-1">
@@ -382,14 +388,16 @@ export function Navbar() {
                           <User className="h-4 w-4 mr-2" />
                           Mi perfil
                         </Button>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start"
-                          onClick={() => navigate("/my-posts")}
-                        >
-                          <Calendar className="h-4 w-4 mr-2" />
-                          Mis eventos
-                        </Button>
+                        {isAdmin && (
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            onClick={() => navigate("/my-posts")}
+                          >
+                            <Calendar className="h-4 w-4 mr-2" />
+                            Mis eventos
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           className="w-full justify-start"

@@ -13,6 +13,7 @@ import PostDetail from "./pages/PostDetail";
 import CreatePost from "./pages/CreatePost";
 import UserProfile from "./pages/UserProfile";
 import NotificationsPage from "./pages/NotificationsPage";
+import SavedEventsPage from "./pages/SavedEventsPage";
 import "./utils/devUtils"; // Importar utilidades de desarrollo
 
 const queryClient = new QueryClient();
@@ -38,7 +39,7 @@ const App = () => (
             <Route path="user/:userId" element={<UserProfile />} />
             <Route path="profile" element={<div>Mi Perfil - TODO</div>} />
             <Route path="my-posts" element={<div>Mis Eventos - TODO</div>} />
-            <Route path="saved-posts" element={<div>Eventos Guardados - TODO</div>} />
+            <Route path="saved-posts" element={<SavedEventsPage />} />
             <Route path="settings" element={<div>Configuración - TODO</div>} />
             <Route path="admin" element={<div>Panel Admin - TODO</div>} />
           </Route>
