@@ -87,8 +87,10 @@ export function SaveButton({
         })
       } else {
         // Guardar
+        console.log("💾 [SaveButton] Guardando post:", postId)
         await savedPostService.savePost(postId, token)
         setIsSaved(true)
+        console.log("✅ [SaveButton] Post guardado exitosamente:", postId)
         toast({
           title: "Post guardado",
           description: "El post se ha agregado a tu lista de guardados.",
