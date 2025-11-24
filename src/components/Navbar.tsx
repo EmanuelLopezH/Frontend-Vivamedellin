@@ -33,6 +33,7 @@ import {
   Menu,
   Calendar,
   Home,
+  BarChart3,
 } from "lucide-react"
 
 interface UserData {
@@ -150,6 +151,18 @@ export function Navbar() {
               <Calendar className="h-4 w-4 mr-2" />
               Comunidad
             </Button>
+            
+            {isLoggedIn && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/dashboard")}
+                className="text-slate-600 hover:text-primary"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Dashboard
+              </Button>
+            )}
           </div>
 
           {/* Barra de búsqueda (Desktop) */}
@@ -387,6 +400,14 @@ export function Navbar() {
                         >
                           <User className="h-4 w-4 mr-2" />
                           Mi perfil
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          onClick={() => navigate("/dashboard")}
+                        >
+                          <BarChart3 className="h-4 w-4 mr-2" />
+                          Dashboard
                         </Button>
                         {isAdmin && (
                           <Button
