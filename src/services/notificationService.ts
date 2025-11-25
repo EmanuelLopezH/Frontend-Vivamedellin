@@ -1,17 +1,27 @@
 const API_URL = "https://vivemedellin-backend.onrender.com/api";
 
-export interface Notification {
+export interface TriggeredByUser {
   id: number;
-  message: string;
-  type: "COMMENT" | "LIKE" | "SAVE" | "FOLLOW" | "SYSTEM";
-  read: boolean;
-  createdAt: string;
-  relatedPostId?: number;
-  relatedUserId?: number;
+  name: string;
+  profileImage: string;
 }
 
-export interface UnreadCount {
-  count: number;
+export interface Notification {
+  id: number;
+  type: string;
+  message: string;
+  postId?: number;
+  postTitle?: string;
+  commentId?: number;
+  triggeredByUser?: TriggeredByUser;
+  isRead: boolean;
+  createdDate: string;
+}
+
+export interface ApiResponse {
+  message: string;
+  success: boolean;
+  token?: string;
 }
 
 /**
@@ -29,7 +39,28 @@ export async function getNotifications(): Promise<Notification[]> {
   });
 
   if (!response.ok) {
-    throw new Error("Error al obtener notificaciones");
+    throw new Error(`Error al obtener notificaciones: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Obtener solo las notificaciones no leídas del usuario
+ */
+export async function getUnreadNotifications(): Promise<Notification[]> {
+  const token = localStorage.getItem("token");
+  
+  const response = await fetch(`${API_URL}/notifications/unread`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Error al obtener notificaciones no leídas: ${response.status}`);
   }
 
   return response.json();
@@ -50,17 +81,17 @@ export async function getUnreadCount(): Promise<number> {
   });
 
   if (!response.ok) {
-    throw new Error("Error al contar notificaciones");
+    throw new Error(`Error al contar notificaciones: ${response.status}`);
   }
 
-  const data: UnreadCount = await response.json();
-  return data.count;
+  // El endpoint retorna directamente el número
+  return response.json();
 }
 
 /**
  * Marcar una notificación como leída
  */
-export async function markAsRead(notificationId: number): Promise<void> {
+export async function markAsRead(notificationId: number): Promise<ApiResponse> {
   const token = localStorage.getItem("token");
   
   const response = await fetch(`${API_URL}/notifications/${notificationId}/read`, {
@@ -72,14 +103,16 @@ export async function markAsRead(notificationId: number): Promise<void> {
   });
 
   if (!response.ok) {
-    throw new Error("Error al marcar notificación como leída");
+    throw new Error(`Error al marcar notificación como leída: ${response.status}`);
   }
+
+  return response.json();
 }
 
 /**
  * Marcar todas las notificaciones como leídas
  */
-export async function markAllAsRead(): Promise<void> {
+export async function markAllAsRead(): Promise<ApiResponse> {
   const token = localStorage.getItem("token");
   
   const response = await fetch(`${API_URL}/notifications/read-all`, {
@@ -91,6 +124,8 @@ export async function markAllAsRead(): Promise<void> {
   });
 
   if (!response.ok) {
-    throw new Error("Error al marcar todas como leídas");
+    throw new Error(`Error al marcar todas como leídas: ${response.status}`);
   }
+
+  return response.json();
 }

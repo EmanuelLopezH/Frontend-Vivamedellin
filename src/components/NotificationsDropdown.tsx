@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,112 +12,67 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Bell, Check, MessageSquare, Heart, Bookmark, User, Info } from "lucide-react";
-import {
-  getNotifications,
-  getUnreadCount,
-  markAsRead,
-  markAllAsRead,
-  type Notification,
-} from "@/services/notificationService";
-import { useToast } from "@/hooks/use-toast";
+import { type Notification } from "@/services/notificationService";
+import { useNotifications } from "@/hooks/useNotifications";
 
 export function NotificationsDropdown() {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    markNotificationAsRead,
+    markAllNotificationsAsRead,
+    refreshNotifications,
+  } = useNotifications();
   const [open, setOpen] = useState(false);
 
-  // Cargar notificaciones
-  const loadNotifications = async () => {
-    try {
-      const [notifs, count] = await Promise.all([
-        getNotifications(),
-        getUnreadCount(),
-      ]);
-      setNotifications(notifs);
-      setUnreadCount(count);
-    } catch (error) {
-      console.error("Error al cargar notificaciones:", error);
-    }
-  };
-
-  // Cargar al abrir el dropdown
-  useEffect(() => {
-    if (open) {
-      loadNotifications();
-    }
-  }, [open]);
-
-  // Auto-actualizar cada 30 segundos
-  useEffect(() => {
-    loadNotifications(); // Carga inicial
-
-    const interval = setInterval(() => {
-      loadNotifications();
-    }, 30000); // 30 segundos
-
-    return () => clearInterval(interval);
-  }, []);
-
   // Manejar click en notificación
-  const handleNotificationClick = async (notification: Notification) => {
+  const handleNotificationClick = useCallback(async (notification: Notification) => {
     try {
       // Marcar como leída si no lo está
-      if (!notification.read) {
-        await markAsRead(notification.id);
-        setUnreadCount((prev) => Math.max(0, prev - 1));
-        setNotifications((prev) =>
-          prev.map((n) =>
-            n.id === notification.id ? { ...n, read: true } : n
-          )
-        );
+      if (!notification.isRead) {
+        await markNotificationAsRead(notification.id);
       }
 
       // Navegar al post relacionado si existe
-      if (notification.relatedPostId) {
+      if (notification.postId) {
         setOpen(false);
-        navigate(`/post/${notification.relatedPostId}`);
+        navigate(`/post/${notification.postId}`);
       }
     } catch (error) {
-      console.error("Error al marcar notificación:", error);
+      console.error("Error al manejar notificación:", error);
     }
-  };
+  }, [markNotificationAsRead, navigate]);
 
   // Marcar todas como leídas
-  const handleMarkAllAsRead = async () => {
+  const handleMarkAllAsRead = useCallback(async () => {
+    if (loading) return; // Prevenir múltiples clics
+    
     try {
-      setLoading(true);
-      await markAllAsRead();
-      setUnreadCount(0);
-      setNotifications((prev) =>
-        prev.map((n) => ({ ...n, read: true }))
-      );
-      toast({
-        title: "✓ Notificaciones marcadas",
-        description: "Todas las notificaciones se marcaron como leídas",
-      });
+      await markAllNotificationsAsRead();
     } catch (error) {
       console.error("Error al marcar todas:", error);
-      toast({
-        title: "Error",
-        description: "No se pudieron marcar las notificaciones",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [markAllNotificationsAsRead, loading]);
+
+  // Refrescar notificaciones al abrir el dropdown
+  const handleOpenChange = useCallback((isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      refreshNotifications();
+    }
+  }, [refreshNotifications]);
 
   // Obtener icono según tipo de notificación
-  const getNotificationIcon = (type: Notification["type"]) => {
-    switch (type) {
+  const getNotificationIcon = (type: string) => {
+    switch (type.toUpperCase()) {
       case "COMMENT":
         return <MessageSquare className="h-4 w-4" />;
       case "LIKE":
         return <Heart className="h-4 w-4" />;
       case "SAVE":
+      case "SAVED":
         return <Bookmark className="h-4 w-4" />;
       case "FOLLOW":
         return <User className="h-4 w-4" />;
@@ -148,7 +103,7 @@ export function NotificationsDropdown() {
   const recentNotifications = notifications.slice(0, 5);
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu open={open} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
@@ -175,7 +130,7 @@ export function NotificationsDropdown() {
               className="h-auto py-1 px-2 text-xs"
             >
               <Check className="h-3 w-3 mr-1" />
-              Marcar todas
+              {loading ? "Marcando..." : "Marcar todas"}
             </Button>
           )}
         </DropdownMenuLabel>
@@ -199,13 +154,13 @@ export function NotificationsDropdown() {
                     {/* Icono */}
                     <div
                       className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${
-                        notification.type === "COMMENT"
+                        notification.type.toUpperCase() === "COMMENT"
                           ? "bg-blue-100 text-blue-600"
-                          : notification.type === "LIKE"
+                          : notification.type.toUpperCase() === "LIKE"
                           ? "bg-red-100 text-red-600"
-                          : notification.type === "SAVE"
+                          : notification.type.toUpperCase() === "SAVE" || notification.type.toUpperCase() === "SAVED"
                           ? "bg-purple-100 text-purple-600"
-                          : notification.type === "FOLLOW"
+                          : notification.type.toUpperCase() === "FOLLOW"
                           ? "bg-green-100 text-green-600"
                           : "bg-slate-100 text-slate-600"
                       }`}
@@ -217,7 +172,7 @@ export function NotificationsDropdown() {
                     <div className="flex-1 min-w-0">
                       <p
                         className={`text-sm ${
-                          notification.read
+                          notification.isRead
                             ? "text-slate-600"
                             : "text-slate-900 font-medium"
                         }`}
@@ -225,12 +180,12 @@ export function NotificationsDropdown() {
                         {notification.message}
                       </p>
                       <p className="text-xs text-slate-500 mt-1">
-                        {getRelativeTime(notification.createdAt)}
+                        {getRelativeTime(notification.createdDate)}
                       </p>
                     </div>
 
                     {/* Indicador de no leída */}
-                    {!notification.read && (
+                    {!notification.isRead && (
                       <div className="flex-shrink-0">
                         <div className="h-2 w-2 bg-blue-600 rounded-full"></div>
                       </div>

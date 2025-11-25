@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -15,60 +15,31 @@ import {
   Loader2,
   Trash2,
 } from "lucide-react";
-import {
-  getNotifications,
-  markAsRead,
-  markAllAsRead,
-  type Notification,
-} from "@/services/notificationService";
-import { useToast } from "@/hooks/use-toast";
+import { type Notification } from "@/services/notificationService";
+import { useNotifications } from "@/hooks/useNotifications";
 
 export default function NotificationsPage() {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [markingAll, setMarkingAll] = useState(false);
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    markNotificationAsRead,
+    markAllNotificationsAsRead,
+  } = useNotifications();
   const [activeTab, setActiveTab] = useState<"all" | "unread">("all");
-
-  // Cargar notificaciones
-  const loadNotifications = async () => {
-    try {
-      setLoading(true);
-      const data = await getNotifications();
-      setNotifications(data);
-    } catch (error) {
-      console.error("Error al cargar notificaciones:", error);
-      toast({
-        title: "Error",
-        description: "No se pudieron cargar las notificaciones",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadNotifications();
-  }, []);
 
   // Manejar click en notificación
   const handleNotificationClick = async (notification: Notification) => {
     try {
       // Marcar como leída si no lo está
-      if (!notification.read) {
-        await markAsRead(notification.id);
-        setNotifications((prev) =>
-          prev.map((n) =>
-            n.id === notification.id ? { ...n, read: true } : n
-          )
-        );
+      if (!notification.isRead) {
+        await markNotificationAsRead(notification.id);
       }
 
       // Navegar al post relacionado si existe
-      if (notification.relatedPostId) {
-        navigate(`/post/${notification.relatedPostId}`);
+      if (notification.postId) {
+        navigate(`/post/${notification.postId}`);
       }
     } catch (error) {
       console.error("Error al marcar notificación:", error);
@@ -78,34 +49,22 @@ export default function NotificationsPage() {
   // Marcar todas como leídas
   const handleMarkAllAsRead = async () => {
     try {
-      setMarkingAll(true);
-      await markAllAsRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-      toast({
-        title: "✓ Notificaciones marcadas",
-        description: "Todas las notificaciones se marcaron como leídas",
-      });
+      await markAllNotificationsAsRead();
     } catch (error) {
       console.error("Error al marcar todas:", error);
-      toast({
-        title: "Error",
-        description: "No se pudieron marcar las notificaciones",
-        variant: "destructive",
-      });
-    } finally {
-      setMarkingAll(false);
     }
   };
 
   // Obtener icono según tipo de notificación
-  const getNotificationIcon = (type: Notification["type"]) => {
+  const getNotificationIcon = (type: string) => {
     const iconClass = "h-5 w-5";
-    switch (type) {
+    switch (type.toUpperCase()) {
       case "COMMENT":
         return <MessageSquare className={iconClass} />;
       case "LIKE":
         return <Heart className={iconClass} />;
       case "SAVE":
+      case "SAVED":
         return <Bookmark className={iconClass} />;
       case "FOLLOW":
         return <User className={iconClass} />;
@@ -142,10 +101,8 @@ export default function NotificationsPage() {
   // Filtrar notificaciones según tab
   const filteredNotifications =
     activeTab === "unread"
-      ? notifications.filter((n) => !n.read)
+      ? notifications.filter((n) => !n.isRead)
       : notifications;
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
 
   if (loading) {
     return (
@@ -168,11 +125,11 @@ export default function NotificationsPage() {
             {unreadCount > 0 && (
               <Button
                 onClick={handleMarkAllAsRead}
-                disabled={markingAll}
+                disabled={loading}
                 variant="outline"
                 size="sm"
               >
-                {markingAll ? (
+                {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Marcando...
@@ -233,7 +190,7 @@ export default function NotificationsPage() {
                   <Card
                     key={notification.id}
                     className={`p-4 cursor-pointer transition-all hover:shadow-md ${
-                      notification.read
+                      notification.isRead
                         ? "bg-white"
                         : "bg-blue-50 border-l-4 border-l-blue-600"
                     }`}
@@ -243,13 +200,13 @@ export default function NotificationsPage() {
                       {/* Icono */}
                       <div
                         className={`flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center ${
-                          notification.type === "COMMENT"
+                          notification.type.toUpperCase() === "COMMENT"
                             ? "bg-blue-100 text-blue-600"
-                            : notification.type === "LIKE"
+                            : notification.type.toUpperCase() === "LIKE"
                             ? "bg-red-100 text-red-600"
-                            : notification.type === "SAVE"
+                            : notification.type.toUpperCase() === "SAVE" || notification.type.toUpperCase() === "SAVED"
                             ? "bg-purple-100 text-purple-600"
-                            : notification.type === "FOLLOW"
+                            : notification.type.toUpperCase() === "FOLLOW"
                             ? "bg-green-100 text-green-600"
                             : "bg-slate-100 text-slate-600"
                         }`}
@@ -261,7 +218,7 @@ export default function NotificationsPage() {
                       <div className="flex-1 min-w-0">
                         <p
                           className={`text-base mb-1 ${
-                            notification.read
+                            notification.isRead
                               ? "text-slate-700"
                               : "text-slate-900 font-medium"
                           }`}
@@ -269,12 +226,12 @@ export default function NotificationsPage() {
                           {notification.message}
                         </p>
                         <p className="text-sm text-slate-500">
-                          {formatDate(notification.createdAt)}
+                          {formatDate(notification.createdDate)}
                         </p>
                       </div>
 
                       {/* Indicador de no leída */}
-                      {!notification.read && (
+                      {!notification.isRead && (
                         <div className="flex-shrink-0 flex items-center">
                           <div className="h-3 w-3 bg-blue-600 rounded-full"></div>
                         </div>
