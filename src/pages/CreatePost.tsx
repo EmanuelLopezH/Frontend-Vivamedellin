@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { categoryService, type Category } from "@/services/categoryService"
 import { createPostService } from "@/services/createPostService"
+import { getPostUrl } from "@/utils/slugUtils"
 import { ArrowLeft, Upload, X, AlertCircle, Loader2, Send, Image as ImageIcon } from "lucide-react"
 
 export default function CreatePost() {
@@ -208,8 +209,9 @@ export default function CreatePost() {
 
       console.log("Post creado exitosamente:", result)
 
-      // Redirigir al post recién creado
-      navigate(`/post/${result.postId}`)
+      // Redirigir al post recién creado usando sistema de slugs
+      const postUrl = getPostUrl(result.postId, result.postTitle)
+      navigate(postUrl)
     } catch (error) {
       console.error("Error al crear post:", error)
       if (error instanceof Error) {

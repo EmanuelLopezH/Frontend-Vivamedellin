@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { getPostUrl } from "@/utils/slugUtils";
 import {
   TrendingUp,
   MessageSquare,
@@ -286,7 +287,7 @@ export default function Dashboard() {
                   <div
                     key={event.id}
                     className="flex items-start gap-4 p-4 rounded-lg border hover:bg-gray-50 transition-colors cursor-pointer group"
-                    onClick={() => navigate(`/post/${event.id}`)}
+                    onClick={() => navigate(getPostUrl(event.id, event.title))}
                   >
                     <div className="flex-shrink-0">
                       <Badge variant={index === 0 ? "default" : "secondary"} className="w-8 h-8 rounded-full flex items-center justify-center">

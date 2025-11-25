@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import { extractIdFromSlug, getPostUrl } from "@/utils/slugUtils"
+import { isAdminUser, canUserEditPost, getCurrentUser } from "@/utils/authUtils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { SaveButton } from "@/components/SaveButton"
 import { CommentSection } from "@/components/CommentSectionNested"
+import { OptimizedImage } from "@/components/OptimizedImage"
 import { postDetailService, type CommentWithReplies } from "@/services/postDetailService"
 import { postServiceBackend } from "@/services/postServiceBackend"
 import type { Post } from "@/types/post"
@@ -32,7 +35,8 @@ const categoryColors: Record<string, string> = {
 }
 
 export default function PostDetail() {
-  const { postId } = useParams<{ postId: string }>()
+  const { slug } = useParams<{ slug: string }>()
+  const postId = slug ? extractIdFromSlug(slug) : null
   const navigate = useNavigate()
   
   const [post, setPost] = useState<Post | null>(null)
@@ -43,24 +47,22 @@ export default function PostDetail() {
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    const userString = localStorage.getItem("user")
-
-    if (token && userString) {
-      try {
-        const userData = JSON.parse(userString)
-        setUser(userData)
-        
-        // Debug: Mostrar información del usuario
-        debugCurrentUser()
-      } catch (error) {
-        console.error("Error al parsear usuario:", error)
-      }
+    const userData = getCurrentUser()
+    if (userData) {
+      setUser(userData)
+      // Debug: Mostrar información del usuario
+      debugCurrentUser()
     }
   }, [])
 
   const loadPostAndComments = async () => {
     if (!postId) return
+
+    if (!postId) {
+      setError("ID del post no válido en la URL")
+      setLoading(false)
+      return
+    }
 
     setLoading(true)
     setError(null)
@@ -126,7 +128,7 @@ export default function PostDetail() {
   }
 
   const isAdmin = user?.roles?.includes("ROLE_ADMIN") || user?.role === "ROLE_ADMIN"
-  const canEditOrDelete = isAdmin || (user && post && user.id === post.userId)
+  const canEditOrDelete = canUserEditPost(user, post)
 
   // Debug: Verificar si el usuario es admin
   console.log("🔍 [PostDetail] Usuario actual:", user)
@@ -200,36 +202,30 @@ export default function PostDetail() {
         {/* Post detail card */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
           {/* Imagen del post */}
-          {post.imageUrl ? (
-            <div className="relative w-full h-96 bg-slate-200">
-              <img
-                src={post.imageUrl}
-                alt={post.postTitle || "Post image"}
-                className="w-full h-full object-cover"
-              />
-              {post.category && (
-                <Badge className={`absolute top-4 left-4 font-medium ${getCategoryColor(post.category.title)}`}>
-                  {post.category.title}
-                </Badge>
-              )}
-            </div>
-          ) : (
-            <div className="relative w-full h-96 bg-gray-200 flex items-center justify-center">
-              <div className="text-8xl">🎉</div>
-              {post.category && (
-                <Badge className={`absolute top-4 left-4 font-medium ${getCategoryColor(post.category.title)}`}>
-                  {post.category.title}
-                </Badge>
-              )}
-            </div>
-          )}
+          <div className="relative w-full h-96 bg-slate-200">
+            <OptimizedImage
+              imageName={post.imageName}
+              alt={post.postTitle || "Post image"}
+              className="w-full h-full"
+              fallback={
+                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                  <div className="text-8xl">🎉</div>
+                </div>
+              }
+            />
+            {post.category && (
+              <Badge className={`absolute top-4 left-4 font-medium ${getCategoryColor(post.category.title)}`}>
+                {post.category.title}
+              </Badge>
+            )}
+          </div>
 
           {/* Contenido */}
           <div className="p-8">
             {/* Header: Autor y fecha */}
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-200">
-              <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white text-lg font-semibold">
-                {post.userName[0].toUpperCase()}
+              <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
+                {post.userName?.[0]?.toUpperCase() || "?"}
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-slate-900">{post.userName}</h3>
@@ -262,7 +258,10 @@ export default function PostDetail() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`/post/${post.id}/edit`)}
+                      onClick={() => {
+                        const editUrl = getPostUrl(post.id, post.postTitle) + '/edit'
+                        navigate(editUrl)
+                      }}
                       className="text-blue-600 border-blue-300"
                     >
                       <Edit className="h-4 w-4 mr-2" />

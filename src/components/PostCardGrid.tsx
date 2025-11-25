@@ -1,10 +1,12 @@
 "use client"
 
 import { useNavigate } from "react-router-dom"
+import { getPostUrl } from "@/utils/slugUtils"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SaveButton } from "@/components/SaveButton"
+import { OptimizedImage } from "@/components/OptimizedImage"
 import { MessageCircle, Heart, Share2, Edit, Trash2 } from "lucide-react"
 import type { Post } from "@/types/post"
 import { postServiceBackend } from "@/services/postServiceBackend"
@@ -34,6 +36,9 @@ export function PostCardGrid({ post, onUpdate, isLoggedIn, isAdmin, currentUserI
   const [isDeleting, setIsDeleting] = useState(false)
 
   const formatTimeAgo = (dateString: string) => {
+    // Validar que dateString no sea undefined/null
+    if (!dateString) return "fecha no disponible"
+    
     // Formato backend: "2025-11-03 04:13:40"
     const date = new Date(dateString.replace(' ', 'T'))
     const now = new Date()
@@ -60,7 +65,7 @@ export function PostCardGrid({ post, onUpdate, isLoggedIn, isAdmin, currentUserI
   }
 
   const handleCardClick = () => {
-    navigate(`/post/${post.id}`)
+    navigate(getPostUrl(post.id, post.postTitle))
   }
 
   const handleDelete = async (e: React.MouseEvent) => {
@@ -97,17 +102,16 @@ export function PostCardGrid({ post, onUpdate, isLoggedIn, isAdmin, currentUserI
     >
       {/* Imagen del evento */}
       <div className="relative w-full h-48 bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden">
-        {post.imageUrl ? (
-          <img
-            src={post.imageUrl}
-            alt={post.postTitle || "Post image"}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-100">
-            <div className="text-6xl">🎉</div>
-          </div>
-        )}
+        <OptimizedImage
+          imageName={post.imageName}
+          alt={post.postTitle || "Post image"}
+          className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+          fallback={
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <div className="text-6xl">🎉</div>
+            </div>
+          }
+        />
         
         {/* Badge de categoría */}
         {post.category && (
@@ -122,7 +126,7 @@ export function PostCardGrid({ post, onUpdate, isLoggedIn, isAdmin, currentUserI
         {/* Header: Autor y tiempo */}
         <div className="flex items-center gap-2 mb-3">
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-            {post.userName[0].toUpperCase()}
+            {post.userName?.[0]?.toUpperCase() || "?"}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-slate-700 truncate">{post.userName}</p>
@@ -150,7 +154,7 @@ export function PostCardGrid({ post, onUpdate, isLoggedIn, isAdmin, currentUserI
             className="flex-1 text-slate-600 hover:text-blue-600 hover:bg-blue-50"
             onClick={(e) => {
               e.stopPropagation()
-              navigate(`/post/${post.id}`)
+              navigate(getPostUrl(post.id, post.postTitle))
             }}
           >
             <MessageCircle className="h-4 w-4 mr-1" />
@@ -185,7 +189,7 @@ export function PostCardGrid({ post, onUpdate, isLoggedIn, isAdmin, currentUserI
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation()
-                  navigate(`/post/${post.id}/edit`)
+                  navigate(getPostUrl(post.id, post.postTitle) + '/edit')
                 }}
                 className="text-slate-600 hover:text-blue-600 hover:bg-blue-50"
               >

@@ -1,4 +1,5 @@
 import type { Post, PostComment } from "@/types/post"
+import { imageService } from "@/services/imageService"
 
 const API_BASE_URL = "https://vivemedellin-backend.onrender.com/api"
 
@@ -29,10 +30,11 @@ export const postDetailService = {
         id: data.postId,
         userId: data.user.id,
         userName: data.user.name,
-        userImage: data.user.profileImage || undefined,
+        userImage: imageService.getImageUrl(data.user.profileImage),
         content: data.content,
         postTitle: data.postTitle,
-        imageUrl: data.imageUrl,
+        imageName: data.imageName,
+        imageUrl: imageService.getImageUrl(data.imageName),
         createdAt: data.creationDate,
         likes: 0,
         commentsCount: data.comments?.length || 0,
@@ -71,7 +73,7 @@ export const postDetailService = {
         postId: postId,
         userId: comment.user.id,
         userName: comment.user.name,
-        userImage: comment.user.profileImage || undefined,
+        userImage: imageService.getImageUrl(comment.user.profileImage),
         content: comment.content,
         createdAt: comment.createdDate,
         editedDate: comment.editedDate,
@@ -126,7 +128,7 @@ export const postDetailService = {
         postId: postId,
         userId: data.user.id,
         userName: data.user.name,
-        userImage: data.user.profileImage || undefined,
+        userImage: imageService.getImageUrl(data.user.profileImage),
         content: data.content,
         createdAt: data.createdDate,
         editedDate: data.editedDate,

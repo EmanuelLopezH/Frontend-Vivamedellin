@@ -109,7 +109,7 @@ export function CommentItem({
       <div className="flex gap-3">
         {/* Avatar */}
         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-          {comment.userName[0].toUpperCase()}
+          {comment.userName?.[0]?.toUpperCase() || "?"}
         </div>
 
         {/* Contenido */}

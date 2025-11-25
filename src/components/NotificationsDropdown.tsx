@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getPostUrl } from "@/utils/slugUtils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,7 +39,8 @@ export function NotificationsDropdown() {
       // Navegar al post relacionado si existe
       if (notification.postId) {
         setOpen(false);
-        navigate(`/post/${notification.postId}`);
+        const postUrl = getPostUrl(notification.postId, notification.postTitle || `Post ${notification.postId}`);
+        navigate(postUrl);
       }
     } catch (error) {
       console.error("Error al manejar notificación:", error);

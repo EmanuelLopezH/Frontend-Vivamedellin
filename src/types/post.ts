@@ -7,6 +7,7 @@ export interface Post {
   userImage?: string
   content: string
   postTitle?: string
+  imageName?: string
   imageUrl?: string
   createdAt: string
   likes: number

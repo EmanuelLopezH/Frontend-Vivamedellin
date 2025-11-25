@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { getPostUrl } from "@/utils/slugUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Bell,
@@ -39,7 +40,8 @@ export default function NotificationsPage() {
 
       // Navegar al post relacionado si existe
       if (notification.postId) {
-        navigate(`/post/${notification.postId}`);
+        const postUrl = getPostUrl(notification.postId, notification.postTitle || `Post ${notification.postId}`);
+        navigate(postUrl);
       }
     } catch (error) {
       console.error("Error al marcar notificación:", error);

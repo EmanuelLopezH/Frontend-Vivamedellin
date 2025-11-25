@@ -47,15 +47,7 @@ export default function UserProfile() {
     }
   }, []);
 
-  // Ajustar tab inicial basado en si es admin
-  useEffect(() => {
-    if (user) {
-      const isAdmin = user.roles?.includes('ROLE_ADMIN');
-      if (!isAdmin && activeTab === "posts") {
-        setActiveTab("saved"); // Si no es admin y está en "posts", cambiar a "saved"
-      }
-    }
-  }, [user, activeTab]);
+  // El tab inicial será siempre "posts"
 
   // Cargar datos del usuario
   useEffect(() => {
@@ -239,14 +231,11 @@ export default function UserProfile() {
           </div>
 
           {/* Estadísticas */}
-          <div className={`grid ${user.roles?.includes('ROLE_ADMIN') ? 'grid-cols-3' : 'grid-cols-2'} gap-4 mt-6 pt-6 border-t`}>
-            {/* Solo mostrar contador de eventos si es admin */}
-            {user.roles?.includes('ROLE_ADMIN') && (
-              <div className="text-center">
-                <div className="text-2xl font-bold text-slate-900">{posts.length}</div>
-                <div className="text-sm text-slate-600">Eventos</div>
-              </div>
-            )}
+          <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-900">{posts.length}</div>
+              <div className="text-sm text-slate-600">Posts</div>
+            </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-slate-900">0</div>
               <div className="text-sm text-slate-600">Guardados</div>
@@ -260,14 +249,11 @@ export default function UserProfile() {
 
         {/* Tabs de contenido */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className={`grid w-full ${user.roles?.includes('ROLE_ADMIN') ? 'grid-cols-3' : 'grid-cols-2'} mb-6`}>
-            {/* Solo mostrar tab 'Mis Eventos' si es admin */}
-            {user.roles?.includes('ROLE_ADMIN') && (
-              <TabsTrigger value="posts" className="gap-2">
-                <Calendar className="h-4 w-4" />
-                Mis Eventos
-              </TabsTrigger>
-            )}
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="posts" className="gap-2">
+              <Calendar className="h-4 w-4" />
+              Posts
+            </TabsTrigger>
             <TabsTrigger value="saved" className="gap-2">
               <BookMarked className="h-4 w-4" />
               Guardados
@@ -276,30 +262,27 @@ export default function UserProfile() {
               <MessageSquare className="h-4 w-4" />
               Comentarios
             </TabsTrigger>
-          </TabsList>
-
-          {/* Tab: Mis Eventos - Solo Admin */}
-          {user.roles?.includes('ROLE_ADMIN') && (
-            <TabsContent value="posts">
+          </TabsList>          {/* Tab: Posts del Usuario */}
+          <TabsContent value="posts">
             {postsLoading ? (
               <div className="text-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
-                <p className="text-slate-600">Cargando eventos...</p>
+                <p className="text-slate-600">Cargando posts...</p>
               </div>
             ) : posts.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-lg">
                 <Calendar className="h-16 w-16 text-slate-300 mx-auto mb-4" />
                 <p className="text-slate-600 text-lg mb-2">
                   {isOwnProfile
-                    ? "Aún no has creado eventos"
-                    : "Este usuario no ha creado eventos"}
+                    ? "Aún no has creado posts"
+                    : "Este usuario no ha creado posts"}
                 </p>
                 {isOwnProfile && (
                   <Button
                     onClick={() => navigate("/create-post")}
                     className="mt-4"
                   >
-                    Crear mi primer evento
+                    Crear mi primer post
                   </Button>
                 )}
               </div>
@@ -325,7 +308,6 @@ export default function UserProfile() {
               </div>
             )}
           </TabsContent>
-          )}
 
           {/* Tab: Eventos Guardados */}
           <TabsContent value="saved">

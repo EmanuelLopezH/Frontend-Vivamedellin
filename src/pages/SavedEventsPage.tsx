@@ -7,6 +7,8 @@ import { BookmarkCheck, Calendar, MapPin, Users, ExternalLink, AlertCircle, Mess
 import { getCurrentUser } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
 import { useSavedPosts } from "@/hooks/useSavedPosts"
+import { getPostUrl } from "@/utils/slugUtils"
+import { OptimizedImage } from "@/components/OptimizedImage"
 
 export default function SavedEventsPage() {
   const [user, setUser] = useState(getCurrentUser())
@@ -59,8 +61,9 @@ export default function SavedEventsPage() {
     })
   }
 
-  const handleViewPost = (postId: number) => {
-    navigate(`/post/${postId}`)
+  const handleViewPost = (postId: number, postTitle: string) => {
+    const postUrl = getPostUrl(postId, postTitle)
+    navigate(postUrl)
   }
 
   // Componente de loading
@@ -163,16 +166,25 @@ export default function SavedEventsPage() {
           
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {savedPosts.map((post) => (
-              <Card key={post.postId} className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer group">
+              <Card 
+                key={post.postId} 
+                className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer group"
+                onClick={() => handleViewPost(post.postId, post.postTitle)}
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold">
+                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold overflow-hidden">
                         {post.user?.profileImage ? (
-                          <img 
-                            src={post.user.profileImage} 
+                          <OptimizedImage 
+                            imageName={post.user.profileImage}
                             alt={post.user.name}
-                            className="w-full h-full rounded-full object-cover"
+                            className="w-full h-full rounded-full"
+                            fallback={
+                              <div className="w-full h-full bg-primary flex items-center justify-center text-white text-xs">
+                                {post.user?.name?.[0]?.toUpperCase() || '?'}
+                              </div>
+                            }
                           />
                         ) : (
                           post.user?.name?.[0]?.toUpperCase() || '?'
@@ -193,15 +205,18 @@ export default function SavedEventsPage() {
 
                 <CardContent className="space-y-4">
                   {/* Imagen del post */}
-                  {post.imageUrl && (
-                    <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                      <img 
-                        src={post.imageUrl} 
-                        alt={post.postTitle}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                      />
-                    </div>
-                  )}
+                  <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                    <OptimizedImage 
+                      imageName={post.imageName}
+                      alt={post.postTitle}
+                      className="w-full h-full group-hover:scale-105 transition-transform duration-200"
+                      fallback={
+                        <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
+                          Sin imagen
+                        </div>
+                      }
+                    />
+                  </div>
 
                   {/* Contenido */}
                   <div>
@@ -238,16 +253,18 @@ export default function SavedEventsPage() {
                   {/* Botones de acción */}
                   <div className="flex gap-2">
                     <Button 
-                      onClick={() => handleViewPost(post.postId)}
                       variant="outline" 
                       size="sm" 
-                      className="flex-1 group-hover:bg-primary group-hover:text-white transition-colors"
+                      className="flex-1 group-hover:bg-primary group-hover:text-white transition-colors pointer-events-none"
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Ver detalles
                     </Button>
                     <Button 
-                      onClick={() => handleUnsavePost(post.postId)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleUnsavePost(post.postId)
+                      }}
                       variant="outline" 
                       size="sm" 
                       className="px-3 text-red-600 hover:bg-red-50 hover:text-red-700"

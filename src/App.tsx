@@ -10,6 +10,7 @@ import EventPage1 from "./pages/EventPage1";
 import EventPage2 from "./pages/EventPage2";
 import PostsFeed from "./pages/PostsFeed";
 import PostDetail from "./pages/PostDetail";
+import EditPost from "./pages/EditPost";
 import CreatePost from "./pages/CreatePost";
 import UserProfile from "./pages/UserProfile";
 import NotificationsPage from "./pages/NotificationsPage";
@@ -30,7 +31,8 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route index element={<Index />} />
             <Route path="posts" element={<PostsFeed />} />
-            <Route path="post/:postId" element={<PostDetail />} />
+            <Route path="post/:slug" element={<PostDetail />} />
+            <Route path="post/:slug/edit" element={<EditPost />} />
             <Route path="create-post" element={<CreatePost />} />
             <Route path="event-01" element={<EventPage1 />} />
             <Route path="event-02" element={<EventPage2 />} />

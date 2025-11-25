@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Heart, MessageCircle, Share2, Send } from "lucide-react"
+import { OptimizedImage } from "@/components/OptimizedImage"
 import type { Post } from "@/types/post"
 import { postService } from "@/services/postService"
 
@@ -80,7 +81,7 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
       {/* Header del post */}
       <div className="flex items-start gap-3 mb-4">
         <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-semibold flex-shrink-0">
-          {post.userName[0].toUpperCase()}
+          {post.userName?.[0]?.toUpperCase() || "?"}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -97,15 +98,14 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
       </div>
 
       {/* Imagen (si existe) */}
-      {post.imageUrl && (
-        <div className="mb-4">
-          <img
-            src={post.imageUrl}
-            alt="Post image"
-            className="w-full rounded-lg max-h-96 object-cover"
-          />
-        </div>
-      )}
+      <div className="mb-4">
+        <OptimizedImage
+          imageName={post.imageName}
+          alt="Post image"
+          className="w-full rounded-lg max-h-96"
+          fallback={null}
+        />
+      </div>
 
       {/* Estadísticas */}
       <div className="flex items-center gap-4 py-3 border-t border-b border-slate-200 text-sm text-slate-600">
