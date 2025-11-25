@@ -2,39 +2,60 @@
  * Servicio para manejar operaciones de posts guardados
  */
 
-import type { Post } from "@/types/post"
+interface User {
+  id: number
+  name: string
+  profileImage: string
+}
 
-const API_BASE_URL = "https://vivemedellin-backend.onrender.com/api"
+interface Category {
+  categoryId: number
+  categoryTitle: string
+  categoryDescription: string
+}
 
-interface BackendSavedPost {
-  postId: number
-  postTitle?: string
+interface Comment {
+  id: number
   content: string
-  imageName?: string
-  imageUrl?: string
-  userName?: string
-  createdAt?: string
-  likes?: number
-  commentsCount?: number
+  createdDate: string
+  editedDate: string
+  user: User
+  parentCommentId: number
+  replies: string[]
+}
+
+export interface SavedPost {
+  postId: number
+  postTitle: string
+  content: string
+  imageName: string
+  imageUrl: string
+  creationDate: string
+  user: User
+  category: Category
+  comments: Comment[]
 }
 
 export interface SavePostResponse {
   message: string
+  success: boolean
+  token: string
 }
 
-export interface CheckSavedResponse {
-  saved: boolean
-}
+const API_BASE_URL = "https://vivemedellin-backend.onrender.com/api"
 
 /**
  * Guardar un post
  * @param postId - ID del post a guardar
- * @param token - Token JWT de autenticación
  */
-export const savePost = async (postId: number, token: string): Promise<SavePostResponse> => {
+export const savePost = async (postId: number): Promise<SavePostResponse> => {
+  const token = localStorage.getItem("token")
+  if (!token) {
+    throw new Error("No hay token de autenticación")
+  }
+
   try {
     console.log("📡 [savePost] Enviando petición para guardar post:", postId)
-    console.log("🔑 [savePost] URL:", `${API_BASE_URL}/saved-posts/${postId}`)
     
     const response = await fetch(`${API_BASE_URL}/saved-posts/${postId}`, {
       method: "POST",
@@ -52,13 +73,11 @@ export const savePost = async (postId: number, token: string): Promise<SavePostR
       throw new Error("No tienes permisos para guardar posts.")
     } else if (response.status === 404) {
       throw new Error("El post no existe.")
-    } else if (response.status === 500) {
-      throw new Error("Error interno del servidor. El backend necesita ser corregido.")
     } else if (!response.ok) {
       throw new Error("Error al guardar el post. Intenta de nuevo.")
     }
 
-    const data = await response.json()
+    const data: SavePostResponse = await response.json()
     console.log("✅ [savePost] Post guardado exitosamente:", data)
     return data
   } catch (error) {
@@ -70,9 +89,13 @@ export const savePost = async (postId: number, token: string): Promise<SavePostR
 /**
  * Dejar de guardar un post
  * @param postId - ID del post a eliminar de guardados
- * @param token - Token JWT de autenticación
  */
-export const unsavePost = async (postId: number, token: string): Promise<SavePostResponse> => {
+export const unsavePost = async (postId: number): Promise<SavePostResponse> => {
+  const token = localStorage.getItem("token")
+  if (!token) {
+    throw new Error("No hay token de autenticación")
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}/saved-posts/${postId}`, {
       method: "DELETE",
@@ -92,7 +115,7 @@ export const unsavePost = async (postId: number, token: string): Promise<SavePos
       throw new Error("Error al quitar el post de guardados. Intenta de nuevo.")
     }
 
-    const data = await response.json()
+    const data: SavePostResponse = await response.json()
     return data
   } catch (error) {
     console.error("Error en unsavePost:", error)
@@ -103,9 +126,13 @@ export const unsavePost = async (postId: number, token: string): Promise<SavePos
 /**
  * Verificar si un post está guardado
  * @param postId - ID del post a verificar
- * @param token - Token JWT de autenticación
  */
-export const checkIfSaved = async (postId: number, token: string): Promise<boolean> => {
+export const checkIfSaved = async (postId: number): Promise<boolean> => {
+  const token = localStorage.getItem("token")
+  if (!token) {
+    return false
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}/saved-posts/${postId}/check`, {
       method: "GET",
@@ -122,8 +149,9 @@ export const checkIfSaved = async (postId: number, token: string): Promise<boole
       return false
     }
 
-    const data: CheckSavedResponse = await response.json()
-    return data.saved
+    // El endpoint devuelve directamente un boolean
+    const isaved: boolean = await response.json()
+    return isaved
   } catch (error) {
     console.error("Error en checkIfSaved:", error)
     return false
@@ -132,12 +160,15 @@ export const checkIfSaved = async (postId: number, token: string): Promise<boole
 
 /**
  * Obtener todos los posts guardados por el usuario
- * @param token - Token JWT de autenticación
  */
-export const getSavedPosts = async (token: string): Promise<Post[]> => {
+export const getSavedPosts = async (): Promise<SavedPost[]> => {
+  const token = localStorage.getItem("token")
+  if (!token) {
+    throw new Error("No hay token de autenticación")
+  }
+
   try {
     console.log("🔍 [getSavedPosts] Consultando:", `${API_BASE_URL}/saved-posts`)
-    console.log("🔑 [getSavedPosts] Token usado:", token.substring(0, 20) + "...")
     
     const response = await fetch(`${API_BASE_URL}/saved-posts`, {
       method: "GET",
@@ -155,39 +186,10 @@ export const getSavedPosts = async (token: string): Promise<Post[]> => {
       throw new Error("Error al cargar posts guardados.")
     }
 
-    const data = await response.json()
-    console.log("📋 [getSavedPosts] Datos recibidos del backend:", data)
-    console.log("⚠️ [getSavedPosts] ADVERTENCIA: Backend devolviendo posts para todos los usuarios")
+    const data: SavedPost[] = await response.json()
+    console.log("📋 [getSavedPosts] Posts guardados recibidos:", data)
     
-    // Mapear los datos del backend al formato esperado por el frontend
-    const mappedData = data.map((item: BackendSavedPost) => ({
-      ...item,
-      id: item.postId, // Mapear postId a id
-      userName: item.userName || 'Usuario desconocido',
-      createdAt: item.createdAt || new Date().toISOString()
-    }))
-    
-    console.log("🔄 [getSavedPosts] Datos mapeados:", mappedData)
-    
-    // SOLUCIÓN TEMPORAL: Validar cada post individualmente
-    // TODO: El backend debería filtrar correctamente por usuario
-    const validatedPosts = []
-    for (const post of mappedData) {
-      try {
-        const isReallyValid = await checkIfSaved(post.id, token)
-        if (isReallyValid) {
-          validatedPosts.push(post)
-          console.log("✅ [getSavedPosts] Post confirmado como guardado:", post.id)
-        } else {
-          console.log("❌ [getSavedPosts] Post NO está realmente guardado:", post.id)
-        }
-      } catch (error) {
-        console.log("⚠️ [getSavedPosts] Error validando post:", post.id, error)
-      }
-    }
-    
-    console.log("🎯 [getSavedPosts] Posts realmente guardados:", validatedPosts)
-    return validatedPosts
+    return data
   } catch (error) {
     console.error("Error en getSavedPosts:", error)
     throw error

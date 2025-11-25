@@ -3,21 +3,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
-import { BookmarkCheck, Calendar, MapPin, Users, ExternalLink, AlertCircle } from "lucide-react"
-import { savedPostService } from "@/services/savedPostService"
+import { BookmarkCheck, Calendar, MapPin, Users, ExternalLink, AlertCircle, MessageCircle, Heart } from "lucide-react"
 import { getCurrentUser } from "@/services/authService"
 import { useNavigate } from "react-router-dom"
-import type { Post } from "@/types/post"
+import { useSavedPosts } from "@/hooks/useSavedPosts"
 
 export default function SavedEventsPage() {
-  const [savedPosts, setSavedPosts] = useState<Post[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState(getCurrentUser())
   const navigate = useNavigate()
+  const {
+    savedPosts,
+    loading: isLoading,
+    error,
+    unsavePost,
+    loadSavedPosts
+  } = useSavedPosts()
 
   useEffect(() => {
-    loadSavedPosts()
+    const currentUser = getCurrentUser()
+    setUser(currentUser)
   }, [])
 
   // Recargar cuando el componente vuelve a estar visible
@@ -33,63 +37,14 @@ export default function SavedEventsPage() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [])
+  }, [loadSavedPosts])
 
-  const loadSavedPosts = async () => {
-    console.log("🔍 [SavedEvents] Iniciando carga de eventos guardados...")
-    
-    const currentUser = getCurrentUser()
-    console.log("👤 [SavedEvents] Usuario actual:", currentUser)
-    
-    if (!currentUser) {
-      console.warn("⚠️ [SavedEvents] No hay usuario logueado")
-      setError("Debes iniciar sesión para ver tus eventos guardados")
-      setIsLoading(false)
-      return
-    }
 
-    setUser(currentUser)
-    const token = localStorage.getItem("token")
-    console.log("🔑 [SavedEvents] Token presente:", !!token)
-    console.log("👤 [SavedEvents] Usuario actual:", currentUser)
-    
-    if (!token) {
-      console.warn("⚠️ [SavedEvents] No hay token")
-      setError("Sesión expirada. Por favor, inicia sesión nuevamente.")
-      setIsLoading(false)
-      return
-    }
-
-    try {
-      console.log("📡 [SavedEvents] Haciendo petición al backend...")
-      setIsLoading(true)
-      setError(null)
-      
-      const posts = await savedPostService.getSavedPosts(token)
-      console.log("✅ [SavedEvents] Posts recibidos:", posts)
-      setSavedPosts(posts)
-    } catch (err) {
-      console.error("❌ [SavedEvents] Error al cargar eventos guardados:", err)
-      setError(err instanceof Error ? err.message : "Error al cargar eventos guardados")
-    } finally {
-      setIsLoading(false)
-      console.log("🏁 [SavedEvents] Carga finalizada")
-    }
-  }
-
-  const handleViewPost = (postId: number) => {
-    navigate(`/post/${postId}`)
-  }
 
   const handleUnsavePost = async (postId: number) => {
-    const token = localStorage.getItem("token")
-    if (!token) return
-
     try {
       console.log("🗑️ [SavedEvents] Eliminando post guardado:", postId)
-      await savedPostService.unsavePost(postId, token)
-      // Recargar la lista después de eliminar
-      await loadSavedPosts()
+      await unsavePost(postId)
     } catch (error) {
       console.error("❌ [SavedEvents] Error al eliminar post guardado:", error)
     }
@@ -102,6 +57,10 @@ export default function SavedEventsPage() {
       month: "long", 
       day: "numeric",
     })
+  }
+
+  const handleViewPost = (postId: number) => {
+    navigate(`/post/${postId}`)
   }
 
   // Componente de loading
@@ -203,20 +162,28 @@ export default function SavedEventsPage() {
           </div>
           
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {(savedPosts || []).filter(post => post && post.id).map((post) => (
-              <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer group">
+            {savedPosts.map((post) => (
+              <Card key={post.postId} className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer group">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold">
-                        {post.userName?.[0]?.toUpperCase() || '?'}
+                        {post.user?.profileImage ? (
+                          <img 
+                            src={post.user.profileImage} 
+                            alt={post.user.name}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                        ) : (
+                          post.user?.name?.[0]?.toUpperCase() || '?'
+                        )}
                       </div>
                       <div>
                         <CardTitle className="text-sm font-semibold text-gray-900 group-hover:text-primary transition-colors">
-                          {post.userName || 'Usuario desconocido'}
+                          {post.user?.name || 'Usuario desconocido'}
                         </CardTitle>
                         <p className="text-xs text-gray-500">
-                          {post.createdAt ? formatDate(post.createdAt) : 'Fecha no disponible'}
+                          {formatDate(post.creationDate)}
                         </p>
                       </div>
                     </div>
@@ -225,12 +192,12 @@ export default function SavedEventsPage() {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                  {/* Imagen del evento */}
+                  {/* Imagen del post */}
                   {post.imageUrl && (
                     <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
                       <img 
                         src={post.imageUrl} 
-                        alt="Evento"
+                        alt={post.postTitle}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                       />
                     </div>
@@ -238,36 +205,32 @@ export default function SavedEventsPage() {
 
                   {/* Contenido */}
                   <div>
-                    {post.postTitle && (
-                      <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                        {post.postTitle}
-                      </h3>
-                    )}
+                    <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {post.postTitle}
+                    </h3>
                     <p className="text-gray-600 text-sm line-clamp-3">
-                      {post.content || 'Contenido no disponible'}
+                      {post.content}
                     </p>
                   </div>
 
                   {/* Categoría */}
-                  {post.category && (
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-gray-400" />
-                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                        {post.category.title}
-                      </span>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-gray-400" />
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                      {post.category.categoryTitle}
+                    </span>
+                  </div>
 
                   {/* Stats */}
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <div className="flex items-center gap-4">
                       <span className="flex items-center gap-1">
-                        <Users className="h-4 w-4" />
-                        {post.likes}
+                        <Heart className="h-4 w-4" />
+                        Likes
                       </span>
                       <span className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {post.commentsCount}
+                        <MessageCircle className="h-4 w-4" />
+                        {post.comments.length} comentarios
                       </span>
                     </div>
                   </div>
@@ -275,7 +238,7 @@ export default function SavedEventsPage() {
                   {/* Botones de acción */}
                   <div className="flex gap-2">
                     <Button 
-                      onClick={() => handleViewPost(post.id)}
+                      onClick={() => handleViewPost(post.postId)}
                       variant="outline" 
                       size="sm" 
                       className="flex-1 group-hover:bg-primary group-hover:text-white transition-colors"
@@ -284,7 +247,7 @@ export default function SavedEventsPage() {
                       Ver detalles
                     </Button>
                     <Button 
-                      onClick={() => handleUnsavePost(post.id)}
+                      onClick={() => handleUnsavePost(post.postId)}
                       variant="outline" 
                       size="sm" 
                       className="px-3 text-red-600 hover:bg-red-50 hover:text-red-700"

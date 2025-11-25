@@ -2,8 +2,8 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useToast } from "@/hooks/use-toast"
-import { savedPostService } from "@/services/savedPostService"
-import { Bookmark, Loader2 } from "lucide-react"
+import { useSavedPosts } from "@/hooks/useSavedPosts"
+import { Bookmark, BookmarkCheck, Loader2 } from "lucide-react"
 
 interface SaveButtonProps {
   postId: number
@@ -21,10 +21,10 @@ export function SaveButton({
   showLabel = false,
 }: SaveButtonProps) {
   const { toast } = useToast()
+  const { isPostSaved, savePost, unsavePost, checkIfSaved, loading } = useSavedPosts()
   const [isSaved, setIsSaved] = useState(initialSaved)
   const [isLoading, setIsLoading] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [token, setToken] = useState<string | null>(null)
   const [isChecking, setIsChecking] = useState(true)
 
   // Verificar autenticación
@@ -34,7 +34,6 @@ export function SaveButton({
 
     if (storedToken && userString) {
       setIsLoggedIn(true)
-      setToken(storedToken)
     } else {
       setIsLoggedIn(false)
       setIsChecking(false)
@@ -44,13 +43,13 @@ export function SaveButton({
   // Verificar si el post está guardado al montar
   useEffect(() => {
     const checkSavedStatus = async () => {
-      if (!isLoggedIn || !token) {
+      if (!isLoggedIn) {
         setIsChecking(false)
         return
       }
 
       try {
-        const saved = await savedPostService.checkIfSaved(postId, token)
+        const saved = await checkIfSaved(postId)
         setIsSaved(saved)
       } catch (error) {
         console.error("Error al verificar estado guardado:", error)
@@ -60,12 +59,17 @@ export function SaveButton({
     }
 
     checkSavedStatus()
-  }, [postId, isLoggedIn, token])
+  }, [postId, isLoggedIn, checkIfSaved])
+
+  // Sincronizar con el estado global del hook
+  useEffect(() => {
+    setIsSaved(isPostSaved(postId))
+  }, [postId, isPostSaved])
 
   // Manejar click en el botón
   const handleToggleSave = async () => {
     // Si no está logueado, mostrar mensaje
-    if (!isLoggedIn || !token) {
+    if (!isLoggedIn) {
       toast({
         variant: "destructive",
         title: "Inicia sesión",
@@ -74,35 +78,27 @@ export function SaveButton({
       return
     }
 
+    if (isLoading) return
+
     setIsLoading(true)
 
     try {
       if (isSaved) {
         // Dejar de guardar
-        await savedPostService.unsavePost(postId, token)
+        await unsavePost(postId)
         setIsSaved(false)
-        toast({
-          title: "Post eliminado de guardados",
-          description: "El post se ha quitado de tu lista de guardados.",
-        })
       } else {
         // Guardar
         console.log("💾 [SaveButton] Guardando post:", postId)
-        await savedPostService.savePost(postId, token)
+        await savePost(postId)
         setIsSaved(true)
         console.log("✅ [SaveButton] Post guardado exitosamente:", postId)
-        toast({
-          title: "Post guardado",
-          description: "El post se ha agregado a tu lista de guardados.",
-        })
       }
     } catch (error) {
       console.error("Error al guardar/quitar post:", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Ocurrió un error. Intenta de nuevo.",
-      })
+      // El hook ya maneja los toasts de error
+      // Revertir estado en caso de error
+      setIsSaved(prev => !prev)
     } finally {
       setIsLoading(false)
     }
@@ -142,12 +138,10 @@ export function SaveButton({
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
+            ) : isSaved ? (
+              <BookmarkCheck className="h-4 w-4 fill-blue-600 animate-in zoom-in-50 duration-200" />
             ) : (
-              <Bookmark
-                className={`h-4 w-4 transition-all ${
-                  isSaved ? "fill-blue-600 animate-in zoom-in-50 duration-200" : ""
-                }`}
-              />
+              <Bookmark className="h-4 w-4 transition-all" />
             )}
             {showLabel && (
               <span className="hidden sm:inline">{isSaved ? "Guardado" : "Guardar"}</span>
